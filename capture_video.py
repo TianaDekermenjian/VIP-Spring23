@@ -10,7 +10,7 @@ fps = 30
 
 # Define the crop region:
 # If you wish to keep the original video, set x and y to 0, w = 1920, and h = 1076
-x, y, w, h = 480, 269, 960, 538
+x, y, w, h = 200, 0, 1520, 1076 # cropping values were picked afted testing on the court itself
 
 # Initialize the ArduCam USB camera
 camera = cv2.VideoCapture(1)
@@ -22,7 +22,7 @@ camera.set(cv2.CAP_PROP_FPS, fps)
 # Display video
 cv2.namedWindow("Video", cv2.WINDOW_NORMAL)
 
-for i in range(2):  # Set number of videos needed
+for i in range(5):  # Set number of videos needed
     # Construct the filename with a timestamp and save it to the desired directory
     filename = "C:/Users/Diana/Desktop/test/video_" + str(i) + "_" + time.strftime("%Y%m%d-%H%M%S") + ".mp4"
 
@@ -31,7 +31,7 @@ for i in range(2):  # Set number of videos needed
     writer = cv2.VideoWriter(filename, fourcc, fps, (w, h))
 
     # Record the video and display the frames in a window
-    recording_duration = 10 # Change accordingly
+    recording_duration = 5 # Change accordingly
     start_time = time.time()
     while True:
         ret, frame = camera.read()
