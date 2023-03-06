@@ -1,5 +1,8 @@
 from tflite_runtime.interpreter import Interpreter
 import cv2
+import os
+os.environ['LD_LIBRARY_PATH'] = '/usr/local/lib'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 # Load the label file
 labels_path = “./models/VIP-Spring23/sunnylabels.txt”
