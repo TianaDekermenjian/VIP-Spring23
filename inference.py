@@ -5,12 +5,12 @@ os.environ['LD_LIBRARY_PATH'] = '/usr/local/lib'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 # Load the label file
-labels_path = “./models/VIP-Spring23/sunnylabels.txt”
+labels_path = "~/VIPSpring23/models/VIP-Spring23/sunnylabels.txt"
 with open(labels_path, 'r') as f:
     labels = [line.strip() for line in f.readlines()]
 
 # Load the model
-model_path = "./models/VIP-Spring23/sunny_edgetpu.tflite”
+model_path = "~/VIPSpring23/models/VIP-Spring23/sunny_edgetpu.tflite"
 interpreter = Interpreter(model_path=model_path, experimental_delegates=[tflite.load_delegate('libedgetpu.so.1')])
 interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()
@@ -18,9 +18,9 @@ output_details = interpreter.get_output_details()
 
 # Set camera resolution to ???x???, FPS to ???
 cap = cv2.VideoCapture(0)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, ???)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, ???)
-cap.set(cv2.CAP_PROP_FPS, ???)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+cap.set(cv2.CAP_PROP_FPS, 20)
 
 while True:
     # Capture a frame from the camera
