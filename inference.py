@@ -1,3 +1,4 @@
+import tflite_runtime.interpreter as tflite
 from tflite_runtime.interpreter import Interpreter
 import cv2
 import os
@@ -5,12 +6,12 @@ os.environ['LD_LIBRARY_PATH'] = '/usr/local/lib'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 # Load the label file
-labels_path = "~/VIPSpring23/models/VIP-Spring23/sunnylabels.txt"
+labels_path = "sunnylabels.txt"
 with open(labels_path, 'r') as f:
     labels = [line.strip() for line in f.readlines()]
 
 # Load the model
-model_path = "~/VIPSpring23/models/VIP-Spring23/sunny_edgetpu.tflite"
+model_path = "sunny_edgetpu.tflite"
 interpreter = Interpreter(model_path=model_path, experimental_delegates=[tflite.load_delegate('libedgetpu.so.1')])
 interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()
