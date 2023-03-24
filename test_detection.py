@@ -11,9 +11,8 @@ from PIL import Image
 script_dir = pathlib.Path(__file__).parent.absolute()
 model_file = os.path.join(script_dir, 'sunny_edgetpu.tflite')
 label_file = os.path.join(script_dir, 'sunnylabels.txt')
-image_file = os.path.join(script_dir, 'parrot.jpg')
 
-images_path = test_images_dir if dataset_is_split else os.path.join(test_dir, "images")
+images_path = test_images_dir 
 filenames = os.listdir(os.path.join(images_path))
 random_index = random.randint(0, len(filenames) - 1)
 INPUT_IMAGE = os.path.join(images_path, filenames[random_index])
