@@ -1,4 +1,5 @@
 import os
+import time
 import pathlib
 import cv2
 import tracebck
@@ -14,7 +15,7 @@ cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 cap.set(cv2.CAP_PROP_FPS, 20)
 
-# Specify the TensorFlow model, labels, and image
+# Specify the TensorFlow model and labels
 script_dir = pathlib.Path(__file__).parent.absolute()
 model_file = os.path.join(script_dir, 'REPLACE')
 label_file = os.path.join(script_dir, 'REPLACE')
@@ -50,16 +51,17 @@ try:
             print('%s: %.5f' % (labels.get(c.id, c.id), c.score))
 
         output_tensor = interpreter.get_tensor(output_details[0]['index'])
+        # print(output_tensor.shape, output_tensor)
         num_detections = len(output_tensor[0])
         
         for obj in objs:
-            print("obJTs")
+            print("obj")
             print(labels.get(obj.id, obj.id))
             print('  id:    ', obj.id)
             print('  score: ', obj.score)
             print('  bbox:  ', obj.bbox)
 
-            cv2.rectangle(frame, (obj.bbox.xmin, obj.bbox.xmax), (obj.bbox.ymin$, obj.bbox.ymax), (0, 255, 0), 2)
+            cv2.rectangle(frame, (obj.bbox.xmin, obj.bbox.xmax), (obj.bbox.ymin, obj.bbox.ymax), (0, 255, 0), 2)
             
         print("Inference Time: ", (time.perf_counter_ns()-st) * 1e-6)
 
