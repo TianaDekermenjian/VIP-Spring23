@@ -24,7 +24,7 @@ interpreter.allocate_tensors()
 # Resize the image
 size = common.input_size(interpreter)
 image = cv2.imread(INPUT_IMAGE)
-image = cv2.imshow(image, (320, 320))
+image = cv2.resize(image, (320, 320))
 
 # Run an inference
 common.set_input(interpreter, image)
