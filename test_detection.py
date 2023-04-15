@@ -6,7 +6,7 @@ from pycoral.utils import edgetpu
 from pycoral.utils import dataset
 from pycoral.adapters import common
 from pycoral.adapters import classify
-from pycoral.adapter import detect
+from pycoral.adapters import detect
 
 # Specify the TensorFlow model, labels, and image
 script_dir = pathlib.Path(__file__).parent.absolute()
