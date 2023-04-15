@@ -26,7 +26,7 @@ interpreter.allocate_tensors()
 output_details = interpreter.get_output_details()
 
 try:
-    while True:
+        while True:
         # Measure inference time
         st = time.perf_counter_ns()
         # Capture a frame from the camera
@@ -42,7 +42,7 @@ try:
         common.set_input(interpreter, image)
         interpreter.invoke()
         classes = classify.get_classes(interpreter, top_k=1)
-        
+
         objs = detect.get_objects(interpreter, 0.4, [1,1])
 
         # Print the result
@@ -53,7 +53,7 @@ try:
         output_tensor = interpreter.get_tensor(output_details[0]['index'])
         # print(output_tensor.shape, output_tensor)
         num_detections = len(output_tensor[0])
-        
+
         for obj in objs:
             print("obj")
             print(labels.get(obj.id, obj.id))
@@ -68,7 +68,7 @@ try:
         # Display the output frame on the screen
         cv2.imshow('Object Detection', frame)
         if cv2.waitKey(1) == ord('q'):
-          break
+            break
 except KeyboardInterrupt:
     pass
 except Exception as e:
