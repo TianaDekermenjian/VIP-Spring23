@@ -33,12 +33,16 @@ def on_start():
 
     # Record the video and display the frames in a window
     start_time = time.time()
+    index = 0
     while isRecording:
         ret, frame = camera.read()
         print('here')
         if not ret:
             break
         writer.write(frame)
+        index = index +1
+        cv2.imwrite(f'~/VIP/frames/frame{index}.png', frame)
+
         print('writing frame')
         # Wait for a short time to display the frames in the window
         cv2.waitKey(1)
