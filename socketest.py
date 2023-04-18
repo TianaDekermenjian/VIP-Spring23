@@ -25,7 +25,7 @@ def on_start():
     camera.set(cv2.CAP_PROP_FPS, fps)
 
     # Construct the filename with a timestamp and save it to the desired directory
-    filename = "~/VIP/video.mp4"
+    filename = "/home/mendel/VIP/video.mp4"
 
     # Initialize the video writer with the output filename and codec
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
@@ -41,7 +41,7 @@ def on_start():
             break
         writer.write(frame)
         index = index +1
-        cv2.imwrite(f'~/VIP/frames/frame{index}.png', frame)
+        cv2.imwrite(f'/home/mendel/VIP/VIP/frames/frame{index}.png', frame)
 
         print('writing frame')
         # Wait for a short time to display the frames in the window
