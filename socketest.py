@@ -29,7 +29,7 @@ def on_start():
 
     # Initialize the video writer with the output filename and codec
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-    writer = cv2.VideoWriter(filename, fourcc, fps)
+    writer = cv2.VideoWriter(filename, fourcc, fps, (640, 480))
 
     # Record the video and display the frames in a window
     start_time = time.time()
