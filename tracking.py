@@ -109,12 +109,12 @@ try:
             error = center_obj - center_frame
             corr = controller(error)
 
-            print(corr, error)
-
             print('hello hello 11')
 
             # Update PWM
-            pwm.duty_cycle = np.clip(pwm.duty_cycle + corr, 0.05, 0.1)
+            pwm.duty_cycle = np.clip(pwm.duty_cycle - corr, 0.05, 0.1)
+
+            print(corr, error, pwm.duty_cycle)
 
             print('hello hello 12')
 
