@@ -40,7 +40,9 @@ print('hello hello 3')
 
 # Initialize the TF interpreter
 interpreter = edgetpu.make_interpreter(model_file)
+print('hello hello 3.5')
 interpreter.allocate_tensors()
+print('hello hello 3.75')
 output_details = interpreter.get_output_details()
 
 print('hello hello 4')
