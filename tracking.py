@@ -94,9 +94,14 @@ try:
 
             cv2.rectangle(frame, (obj.bbox.xmin, obj.bbox.xmax), (obj.bbox.ymin, obj.bbox.ymax), (0, 255, 0), 2)
 
+        print("Inference Time: ", (time.perf_counter_ns() - st) * 1e-6)
+
+        print('hello hello 9')
+
+        if len(objs) >= 1:
             # Get center of bbox and center of frame
             center_frame = frame.shape[1] / 2
-            center_obj = (obj.bbox.xmin + obj.bbox.xmax) / 2
+            center_obj = (objs[0].bbox.xmin + objs[0].bbox.xmax) / 2
 
             print('hello hello 10')
 
@@ -108,13 +113,8 @@ try:
 
             # Update PWM
             pwm.duty_cycle = np.clip(pwm.duty_cycle + corr, 0.05, 0.1)
-            time.sleep(1)
 
-        print("Inference Time: ", (time.perf_counter_ns() - st) * 1e-6)
-
-        print('hello hello 9')
-
-        print('hello hello 12')
+            print('hello hello 12')
 
         # Display the output frame on the screen
         cv2.imshow('Object Detection', frame)
