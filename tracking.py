@@ -32,7 +32,7 @@ cap.set(cv2.CAP_PROP_FPS, 20)
 
 # Specify the TensorFlow model and labels
 script_dir = pathlib.Path(__file__).parent.absolute()
-model_file = os.path.join(script_dir, './models (edgetpu)/ssd_mobilenet_v2_face_quant_postprocess_edgetpu.tflite')
+model_file = os.path.join(script_dir, './models (edgetpu)/sunny_edgetpu.tflite')
 # label_file = os.path.join(script_dir, 'REPLACE')
 
 print('hello hello 2.5')
