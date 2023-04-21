@@ -109,6 +109,8 @@ try:
             error = center_obj - center_frame
             corr = controller(error)
 
+            print(corr, error)
+
             print('hello hello 11')
 
             # Update PWM
