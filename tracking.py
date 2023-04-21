@@ -29,7 +29,7 @@ cap.set(cv2.CAP_PROP_FPS, 20)
 
 # Specify the TensorFlow model and labels
 script_dir = pathlib.Path(__file__).parent.absolute()
-model_file = os.path.join(script_dir, '/home/mendel/VIP/VIP-Spring23/models (edgetpu)/face-detector-quantized_edgetpu.tflite')
+model_file = os.path.join(script_dir, './models (edgetpu)/face-detector-quantized_edgetpu.tflite')
 # label_file = os.path.join(script_dir, 'REPLACE')
 
 # Initialize the TF interpreter
@@ -95,9 +95,9 @@ try:
             break
 except KeyboardInterrupt:
     pass
-except Exception as e:
-    print("Error", e)
-    traceback.print_exc()
+# except Exception as e:
+#     print("Error", e)
+#     traceback.print_exc()
 
 pwm.close()
 
