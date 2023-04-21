@@ -12,7 +12,7 @@ from pycoral.adapters import classify
 from pycoral.adapters import detect
 from PID import PID
 
-controller = PID(0.01, 0, 0)
+controller = PID(0.0005, 0, 0)
 
 # Open PWM pin
 pwm = PWM(1, 0)
