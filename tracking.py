@@ -2,6 +2,7 @@ import os
 import time
 import pathlib
 import cv2
+import numpy as np
 import traceback
 from periphery import PWM
 from pycoral.utils import edgetpu
@@ -106,7 +107,7 @@ try:
             print('hello hello 11')
 
             # Update PWM
-            pwm.duty_cycle += corr
+            pwm.duty_cycle = np.clip(pwm.duty_cycle + corr, 0.05, 0.1)
             time.sleep(1)
 
         print("Inference Time: ", (time.perf_counter_ns() - st) * 1e-6)
