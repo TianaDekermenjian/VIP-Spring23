@@ -16,7 +16,7 @@ controller = PID(0.0001, 0, 0)
 print('hello hello 1')
 
 # Open PWM pin
-pwm = PWM(2, 0)
+pwm = PWM(1, 0)
 
 pwm.frequency = 50
 pwm.duty_cycle = 0.05
