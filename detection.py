@@ -2,7 +2,7 @@ import os
 import time
 import pathlib
 import cv2
-import tracebck
+import traceback
 from pycoral.utils import edgetpu
 from pycoral.utils import dataset
 from pycoral.adapters import common
