@@ -18,9 +18,11 @@ controller = PID(0.01, 0, 0)
 pwm = PWM(1, 0)
 
 pwm.frequency = 50
-pwm.duty_cycle = 0.05
+pwm.duty_cycle = 0.95
 
 pwm.enable()
+
+time.sleep(2)
 
 # Set camera resolution and FPS accordingly
 cap = cv2.VideoCapture(1)
