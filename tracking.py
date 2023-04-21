@@ -68,7 +68,7 @@ try:
 
         for obj in objs:
             print("obj")
-            print(labels.get(obj.id, obj.id))
+            # print(labels.get(obj.id, obj.id))
             print('  id:    ', obj.id)
             print('  score: ', obj.score)
             print('  bbox:  ', obj.bbox)
