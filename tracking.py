@@ -35,6 +35,7 @@ script_dir = pathlib.Path(__file__).parent.absolute()
 model_file = os.path.join(script_dir, './models (edgetpu)/ssd_mobilenet_v2_face_quant_postprocess_edgetpu.tflite')
 # label_file = os.path.join(script_dir, 'REPLACE')
 
+print('hello hello 2.5')
 print('hello hello 3')
 
 # Initialize the TF interpreter
