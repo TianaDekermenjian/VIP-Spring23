@@ -93,25 +93,25 @@ try:
 
             cv2.rectangle(frame, (obj.bbox.xmin, obj.bbox.xmax), (obj.bbox.ymin, obj.bbox.ymax), (0, 255, 0), 2)
 
+            # Get center of bbox and center of frame
+            center_frame = frame.shape[1] / 2
+            center_obj = (obj.bbox.xmin + obj.bbox.xmax) / 2
+
+            print('hello hello 10')
+
+            # Get the offset and correction from controller
+            error = center_obj - center_frame
+            corr = controller(error)
+
+            print('hello hello 11')
+
+            # Update PWM
+            pwm.duty_cycle += corr
+            time.sleep(1)
+
         print("Inference Time: ", (time.perf_counter_ns() - st) * 1e-6)
 
         print('hello hello 9')
-
-        # Get center of bbox and center of frame
-        center_frame = frame.shape[1]/2
-        center_obj = (obj.bbox.xmin + obj.bbox.xmax)/2
-
-        print('hello hello 10')
-
-        # Get the offset and correction from controller
-        error = center_obj - center_frame
-        corr = controller(error)
-
-        print('hello hello 11')
-
-        # Update PWM
-        pwm.duty_cycle += corr
-        time.sleep(1)
 
         print('hello hello 12')
 
