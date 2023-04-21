@@ -26,7 +26,7 @@ interpreter.allocate_tensors()
 output_details = interpreter.get_output_details()
 
 try:
-        while True:
+    while True:
         # Measure inference time
         st = time.perf_counter_ns()
         # Capture a frame from the camera
