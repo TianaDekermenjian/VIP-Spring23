@@ -5,8 +5,8 @@ import cv2
 import boto3
 
 # Example usage
-AWS_SECRET_KEY = 'a4wG2hWjqiXf0ZDpVkqeVLB7JAG+EcfXthbkuctf'
-ACCESS_KEY_ID = 'AKIAY2VTG4SZL2JXQNOQ'
+AWS_SECRET_KEY = ''
+ACCESS_KEY_ID = ''
 
 # Create an S3 client
 s3 = boto3.client('s3', aws_access_key_id=ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_KEY)
