@@ -4,12 +4,13 @@ import time
 import cv2
 import boto3
 
-# Example usage
-AWS_SECRET_KEY = ''
-ACCESS_KEY_ID = ''
+
+# Load environment variables from .env file
+from dotenv import load_dotenv
+load_dotenv()
 
 # Create an S3 client
-s3 = boto3.client('s3', aws_access_key_id=ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_KEY)
+s3 = boto3.client('s3', aws_access_key_id=os.getenv("ACCESS_KEY_ID"), aws_secret_access_key=os.getenv("AWS_SECRET_KEY"))
 
 sio = socketio.Client()
 isRecording = False
