@@ -33,7 +33,6 @@ cap.set(cv2.CAP_PROP_FPS, 20)
 # Specify the TensorFlow model and labels
 script_dir = pathlib.Path(__file__).parent.absolute()
 model_file = os.path.join(script_dir, './models (edgetpu)/sunny_edgetpu.tflite')
-# label_file = os.path.join(script_dir, 'REPLACE')
 
 # Initialize the TF interpreter
 interpreter = edgetpu.make_interpreter(model_file)
@@ -59,11 +58,6 @@ try:
         classes = classify.get_classes(interpreter, top_k=1)
 
         objs = detect.get_objects(interpreter, 0.4, [1, 1])
-
-        # Print the result
-        # labels = dataset.read_label_file(label_file)
-        # for c in classes:
-        #     print('%s: %.5f' % (labels.get(c.id, c.id), c.score))
 
         output_tensor = interpreter.get_tensor(output_details[0]['index'])
         # print(output_tensor.shape, output_tensor)
