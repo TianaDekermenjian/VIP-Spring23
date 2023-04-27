@@ -4,7 +4,6 @@ import time
 import cv2
 import boto3
 
-
 # Load environment variables from .env file
 from dotenv import load_dotenv
 load_dotenv()
@@ -37,7 +36,7 @@ def on_start():
     # Record the video
     start_time = time.time()
     index = 0
-    while isRecording:
+    while isRecording and time.time() - start_time < 5:
         ret, frame = camera.read()
         if not ret:
             break
@@ -45,13 +44,13 @@ def on_start():
         index = index +1
         cv2.imwrite(f'/home/mendel/VIP/VIP/frames/frame{index}.png', frame)
 
-        cv2.waitKey(1)
+        cv2.waitKey(50)
 
-        frame_dir = f'/home/mendel/VIP/VIP/frames/'
-        frame_files = [os.path.join(frame_dir, f) for f in os.listdir(frame_dir) if f.endswith('.png')]
-
-        for frame_file in frame_files:
-            s3.upload_file(frame_file, 'fitchain', f'coral_recordings/{os.path.basename(frame_file)}')
+        # frame_dir = f'/home/mendel/VIP/VIP/frames/'
+        # frame_files = [os.path.join(frame_dir, f) for f in os.listdir(frame_dir) if f.endswith('.png')]
+        #
+        # for frame_file in frame_files:
+        #     s3.upload_file(frame_file, 'fitchain', f'coral_recordings/{os.path.basename(frame_file)}')
 
     # Release the camera and destroy the window when all recordings are complete
     camera.release()
