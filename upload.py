@@ -30,9 +30,12 @@ def upload_thread():
             frame_files = [os.path.join(frame_dir, f) for f in os.listdir(frame_dir) if f.endswith('.mp4')]
             print(frame_files)
             for frame_file in frame_files:
-                s3.upload_file(frame_file, 'fitchain', f'coral_recordings/{os.path.basename(frame_file)}')
-                print('uploaded')
-                os.remove(frame_file)
+                try:
+                    s3.upload_file(frame_file, 'fitchain', f'coral_recordings/{os.path.basename(frame_file)}')
+                    print('uploaded')
+                    os.remove(frame_file)
+                except Exception as e:
+                    print(e)
             isFinished = False
 
 @sio.on('connect')
