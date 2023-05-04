@@ -24,11 +24,11 @@ async def upload_thread():
     while True:
         frame_dir = f'/home/mendel/VIP/frames/'
         frame_files = [os.path.join(frame_dir, f) for f in os.listdir(frame_dir) if f.endswith('.png')]
-        print('is recording')
-        for frame_file in frame_files:
-            await s3.upload_file(frame_file, 'fitchain', f'coral_recordings/{os.path.basename(frame_file)}')
-            print('uploaded') 
-            os.remove(frame_file)
+        print(isRecording)
+        # for frame_file in frame_files:
+        #     await s3.upload_file(frame_file, 'fitchain', f'coral_recordings/{os.path.basename(frame_file)}')
+        #     print('uploaded')
+        #     os.remove(frame_file)
 
 def in_between():
    asyncio.run(upload_thread())
