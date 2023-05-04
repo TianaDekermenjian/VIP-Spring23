@@ -16,7 +16,7 @@ s3 = boto3.client('s3', aws_access_key_id=os.getenv("ACCESS_KEY_ID"), aws_secret
 sio = socketio.Client()
 isRecording = False
 
-async def upload_thread():
+def upload_thread():
     print('enter thread')
 
     frame_files = []
@@ -28,12 +28,12 @@ async def upload_thread():
             frame_files = [os.path.join(frame_dir, f) for f in os.listdir(frame_dir) if f.endswith('.mp4')]
             print(frame_files)
             for frame_file in frame_files:
-                await s3.upload_file(frame_file, 'fitchain', f'coral_recordings/{os.path.basename(frame_file)}')
+                s3.upload_file(frame_file, 'fitchain', f'coral_recordings/{os.path.basename(frame_file)}')
                 print('uploaded')
                 os.remove(frame_file)
 
-def in_between():
-   asyncio.run(upload_thread())
+# def in_between():
+#    asyncio.run(upload_thread())
 
 @sio.on('connect')
 def on_connect():
@@ -91,7 +91,7 @@ def on_stop():
 sio.connect('http://ec2-52-91-118-179.compute-1.amazonaws.com:3001')
 # Testing locally
 #sio.connect('http://192.168.100.60:5000')
-t = threading.Thread(target=in_between)
+t = threading.Thread(target=upload_thread)
 
 t.start()
 t.join()
