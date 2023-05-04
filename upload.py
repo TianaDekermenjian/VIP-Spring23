@@ -54,7 +54,7 @@ def on_start():
     camera.set(cv2.CAP_PROP_FRAME_HEIGHT, resolution[1])
     camera.set(cv2.CAP_PROP_FPS, fps)
 
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    fourcc = cv2.VideoWriter_fourcc(*'MP4V')
     out = cv2.VideoWriter(f'/home/mendel/VIP/frames/output.mp4', fourcc, fps, resolution)
 
     # Record the video
