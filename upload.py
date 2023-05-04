@@ -4,6 +4,7 @@ import time
 import cv2
 import boto3
 import threading
+import asyncio
 
 # Load environment variables from .env file
 from dotenv import load_dotenv
@@ -16,13 +17,19 @@ sio = socketio.Client()
 isRecording = False
 
 async def upload_thread():
-    while isRecording:
-        frame_dir = f'/home/mendel/VIP/VIP/frames/'
-        frame_files = [os.path.join(frame_dir, f) for f in os.listdir(frame_dir) if f.endswith('.png')]
+    print('enter thread')
 
+    while True:
+        frame_dir = f'/home/mendel/VIP/frames/'
+        frame_files = [os.path.join(frame_dir, f) for f in os.listdir(frame_dir) if f.endswith('.png')]
+        print(frame_files)
         for frame_file in frame_files:
             await s3.upload_file(frame_file, 'fitchain', f'coral_recordings/{os.path.basename(frame_file)}')
+            print('uploaded') 
             os.remove(frame_file)
+
+def in_between():
+   asyncio.run(upload_thread())
 
 @sio.on('connect')
 def on_connect():
@@ -48,6 +55,7 @@ def on_start():
     index = 0
     while isRecording and time.time() - start_time < 5:
         ret, frame = camera.read()
+        print('it is recording')
         if not ret:
             break
 
@@ -58,6 +66,7 @@ def on_start():
 
     # Release the camera and destroy the window when all recordings are complete
     camera.release()
+    print('recording is done')
     cv2.destroyAllWindows()
 
 @sio.on('stop_recording')
@@ -66,9 +75,9 @@ def on_stop():
     print("Stopped")
     isRecording = False
 
-sio.connect('http://ec2-52-91-118-179.compute-1.amazonaws.com:3001')
-
-t = threading.Thread(target=upload_thread)
+#sio.connect('http://ec2-52-91-118-179.compute-1.amazonaws.com:3001')
+sio.connect('http://192.168.100.60:5000')
+t = threading.Thread(target=in_between)
 
 t.start()
 t.join()

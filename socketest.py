@@ -42,7 +42,7 @@ def on_start():
             break
 
         index = index +1
-        cv2.imwrite(f'/home/mendel/VIP/VIP/frames/frame{index}.png', frame)
+        cv2.imwrite(f'/home/mendel/VIP/frames/frame{index}.png', frame)
 
         cv2.waitKey(50)
 
@@ -55,12 +55,13 @@ def on_start():
     # Release the camera and destroy the window when all recordings are complete
     camera.release()
     cv2.destroyAllWindows()
-
+    print('exited the camera')
 @sio.on('stop_recording')
 def on_stop():
     global isRecording
     print("Stopped")
     isRecording = False
 
-sio.connect('http://ec2-52-91-118-179.compute-1.amazonaws.com:3001')
+#sio.connect('http://ec2-52-91-118-179.compute-1.amazonaws.com:3001')
+sio.connect('http://192.168.100.60:5000')
 sio.wait()
