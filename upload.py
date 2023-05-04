@@ -21,10 +21,10 @@ async def upload_thread():
 
     frame_files = []
 
-    while isRecording:
+    while True:
         frame_dir = f'/home/mendel/VIP/frames/'
         frame_files = [os.path.join(frame_dir, f) for f in os.listdir(frame_dir) if f.endswith('.png')]
-        print(frame_files)
+        print('is recording')
         for frame_file in frame_files:
             await s3.upload_file(frame_file, 'fitchain', f'coral_recordings/{os.path.basename(frame_file)}')
             print('uploaded') 
@@ -57,7 +57,7 @@ def on_start():
     index = 0
     while isRecording and time.time() - start_time < 5:
         ret, frame = camera.read()
-        print('it is recording')
+        #print('it is recording')
         if not ret:
             break
 
