@@ -44,7 +44,7 @@ def on_connect():
 
 @sio.on('start_recording')
 def on_start():
-    global isRecording
+    global isRecording, isFinished
     print("Started")
     isRecording = True
     # Set the camera resolution and frame rate
