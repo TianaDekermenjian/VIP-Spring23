@@ -15,15 +15,17 @@ s3 = boto3.client('s3', aws_access_key_id=os.getenv("ACCESS_KEY_ID"), aws_secret
 
 sio = socketio.Client()
 isRecording = False
+isFinished = False
 
 def upload_thread():
+    global isFinished
     print('enter thread')
 
     frame_files = []
 
     while True:
         time.sleep(0.1)
-        if isRecording or len(frame_files) > 0:
+        if isFinished or len(frame_files) > 0:
             frame_dir = f'/home/mendel/VIP/frames/'
             frame_files = [os.path.join(frame_dir, f) for f in os.listdir(frame_dir) if f.endswith('.mp4')]
             print(frame_files)
@@ -31,6 +33,7 @@ def upload_thread():
                 s3.upload_file(frame_file, 'fitchain', f'coral_recordings/{os.path.basename(frame_file)}')
                 print('uploaded')
                 os.remove(frame_file)
+            isFinished = False
 
 # def in_between():
 #    asyncio.run(upload_thread())
@@ -78,6 +81,7 @@ def on_start():
     # Release the camera and destroy the window when all recordings are complete
     camera.release()
     out.release()
+    isFinished = True
     print('recording is done')
     cv2.destroyAllWindows()
 
