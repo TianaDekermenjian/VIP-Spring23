@@ -62,7 +62,7 @@ def on_start():
             break
 
         index = index +1
-        cv2.imwrite(f'/home/mendel/VIP/VIP/frames/frame{index}.png', frame)
+        cv2.imwrite(f'/home/mendel/VIP/frames/frame{index}.png', frame)
 
         cv2.waitKey(1)
     stop_time = time.time()
