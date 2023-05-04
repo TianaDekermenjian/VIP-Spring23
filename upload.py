@@ -21,7 +21,7 @@ async def upload_thread():
 
     frame_files = []
 
-    while isRecording or len(frame_files) > 0:
+    while isRecording:
         frame_dir = f'/home/mendel/VIP/frames/'
         frame_files = [os.path.join(frame_dir, f) for f in os.listdir(frame_dir) if f.endswith('.png')]
         print(frame_files)
