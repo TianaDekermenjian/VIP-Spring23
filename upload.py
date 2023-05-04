@@ -19,7 +19,9 @@ isRecording = False
 async def upload_thread():
     print('enter thread')
 
-    while True:
+    frame_files = []
+
+    while isRecording or len(frame_files) > 0:
         frame_dir = f'/home/mendel/VIP/frames/'
         frame_files = [os.path.join(frame_dir, f) for f in os.listdir(frame_dir) if f.endswith('.png')]
         print(frame_files)
