@@ -25,7 +25,7 @@ async def upload_thread():
         time.sleep(0.1)
         if isRecording or len(frame_files) > 0:
             frame_dir = f'/home/mendel/VIP/frames/'
-            frame_files = [os.path.join(frame_dir, f) for f in os.listdir(frame_dir) if f.endswith('.png')]
+            frame_files = [os.path.join(frame_dir, f) for f in os.listdir(frame_dir) if f.endswith('.mp4')]
             print(frame_files)
             for frame_file in frame_files:
                 await s3.upload_file(frame_file, 'fitchain', f'coral_recordings/{os.path.basename(frame_file)}')
@@ -54,17 +54,21 @@ def on_start():
     camera.set(cv2.CAP_PROP_FRAME_HEIGHT, resolution[1])
     camera.set(cv2.CAP_PROP_FPS, fps)
 
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    out = cv2.VideoWriter(f'/home/mendel/VIP/frames/output.mp4', fourcc, fps, resolution)
+
     # Record the video
     start_time = time.time()
-    index = 0
+    # index = 0
     while isRecording and time.time() - start_time < 5:
         ret, frame = camera.read()
         #print('it is recording')
         if not ret:
             break
 
-        index = index +1
-        cv2.imwrite(f'/home/mendel/VIP/frames/frame{index}.png', frame)
+        # index = index +1
+        #cv2.imwrite(f'/home/mendel/VIP/frames/frame{index}.png', frame)
+        out.write(frame)
 
         cv2.waitKey(1)
     stop_time = time.time()
@@ -73,6 +77,7 @@ def on_start():
 
     # Release the camera and destroy the window when all recordings are complete
     camera.release()
+    out.release()
     print('recording is done')
     cv2.destroyAllWindows()
 
