@@ -34,7 +34,7 @@ def upload_thread():
             for frame_file in frame_files:
                 try:
                     original_name = os.path.basename(frame_file).split('.')
-                    s3.upload_file(frame_file, 'fitchain-ai-videos', f'videos_input/{game_id}.{original_name[1]}')
+                    s3.upload_file(frame_file, 'fitchain-ai-videos', f'videos_input/{game_id}.{original_name[1]}', ExtraArgs = {'ACL':'public-read'})
                     print('uploaded')
                     url = f"https://178a-185-84-106-189.ngrok-free.app//Inference/Run_Inference_In_Background/{game_id}"
                     requests.post(url)
@@ -49,8 +49,8 @@ def on_connect():
 
 @sio.on('start_recording')
 def on_start(data):
+    global isRecording, game_id
     game_id = data['data']
-    global isRecording
     print("Started")
     isRecording = True
     # Set the camera resolution and frame rate
