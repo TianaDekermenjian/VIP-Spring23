@@ -84,7 +84,7 @@ def on_start(data):
     cv2.destroyAllWindows()
 
 @sio.on('stop_recording')
-def on_stop():
+def on_stop(data):
     global isRecording, isFinished
     print("Stopped")
     isRecording = False
