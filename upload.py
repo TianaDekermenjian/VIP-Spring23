@@ -5,7 +5,6 @@ import cv2
 import boto3
 import threading
 import requests
-import asyncio
 
 # Load environment variables from .env file
 from dotenv import load_dotenv
@@ -17,6 +16,8 @@ s3 = boto3.client('s3', aws_access_key_id=os.getenv("ACCESS_KEY_ID"), aws_secret
 sio = socketio.Client()
 isRecording = False
 isFinished = False
+
+game_id = 0
 
 def upload_thread():
     global isFinished
@@ -32,9 +33,10 @@ def upload_thread():
             print(frame_files)
             for frame_file in frame_files:
                 try:
-                    s3.upload_file(frame_file, 'fitchain', f'coral_recordings/{os.path.basename(frame_file)}')
+                    original_name = os.path.basename(frame_file).split('.')
+                    s3.upload_file(frame_file, 'fitchain-ai-videos', f'videos_input/{game_id}.{original_name[1]}')
                     print('uploaded')
-                    url = "https://178a-185-84-106-189.ngrok-free.app//Inference/Run_Inference_In_Background/{gameId}"
+                    url = f"https://178a-185-84-106-189.ngrok-free.app//Inference/Run_Inference_In_Background/{game_id}"
                     requests.post(url)
                     os.remove(frame_file)
                 except Exception as e:
@@ -47,39 +49,39 @@ def on_connect():
 
 @sio.on('start_recording')
 def on_start(data):
-    print(data)
-#     global isRecording
-#     print("Started")
-#     isRecording = True
-#     # Set the camera resolution and frame rate
-#     resolution = (640, 480)
-#     fps = 20
-#
-#     # Initialize the ArduCam USB camera
-#     camera = cv2.VideoCapture(1)
-#     camera.set(cv2.CAP_PROP_FRAME_WIDTH, resolution[0])
-#     camera.set(cv2.CAP_PROP_FRAME_HEIGHT, resolution[1])
-#     camera.set(cv2.CAP_PROP_FPS, fps)
-#
-#     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-#     out = cv2.VideoWriter(f'/home/mendel/VIP/frames/output.mp4', fourcc, fps, resolution)
-#
-#     # Record the video
-#     while isRecording:
-#         ret, frame = camera.read()
-#         if not ret:
-#             break
-#
-#         out.write(frame)
-#
-#         cv2.waitKey(1)
-#
-#     # Release the camera and destroy the window when all recordings are complete
-#     camera.release()
-#     out.release()
-#
-#     print('recording is done')
-#     cv2.destroyAllWindows()
+    game_id = data['data']
+    global isRecording
+    print("Started")
+    isRecording = True
+    # Set the camera resolution and frame rate
+    resolution = (640, 480)
+    fps = 20
+
+    # Initialize the ArduCam USB camera
+    camera = cv2.VideoCapture(1)
+    camera.set(cv2.CAP_PROP_FRAME_WIDTH, resolution[0])
+    camera.set(cv2.CAP_PROP_FRAME_HEIGHT, resolution[1])
+    camera.set(cv2.CAP_PROP_FPS, fps)
+
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    out = cv2.VideoWriter(f'/home/mendel/VIP/frames/output.mp4', fourcc, fps, resolution)
+
+    # Record the video
+    while isRecording:
+        ret, frame = camera.read()
+        if not ret:
+            break
+
+        out.write(frame)
+
+        cv2.waitKey(1)
+
+    # Release the camera and destroy the window when all recordings are complete
+    camera.release()
+    out.release()
+
+    print('recording is done')
+    cv2.destroyAllWindows()
 
 @sio.on('stop_recording')
 def on_stop():
@@ -89,7 +91,7 @@ def on_stop():
     isFinished = True
 
 # Testing app
-sio.connect('http://ec2-52-91-118-179.compute-1.amazonaws.com:3001')
+sio.connect('http://ec2-16-170-232-235.eu-north-1.compute.amazonaws.com:3001')
 # Testing locally
 #sio.connect('http://192.168.100.60:5000')
 t = threading.Thread(target=upload_thread)
