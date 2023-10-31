@@ -38,8 +38,8 @@ def upload_thread():
                     print('uploaded')
                     url = f"https://178a-185-84-106-189.ngrok-free.app/Inference/Run_Inference_In_Background/{game_id}"
                     response = requests.post(url)
-                    print(response)
                     os.remove(frame_file)
+                    print(response)
                 except Exception as e:
                     print(e)
             isFinished = False
