@@ -36,7 +36,7 @@ def upload_thread():
                     original_name = os.path.basename(frame_file).split('.')
                     s3.upload_file(frame_file, 'fitchain-ai-videos', f'videos_input/{game_id}.{original_name[1]}', ExtraArgs = {'ACL':'public-read'})
                     print('uploaded')
-                    url = f"https://178a-185-84-106-189.ngrok-free.app/Inference/Run_Inference_In_Background/{game_id}"
+                    url = f"https://polished-remotely-troll.ngrok-free.app/Inference/Run_Inference_In_Background/{game_id}"
                     response = requests.post(url)
                     os.remove(frame_file)
                     print(response)
