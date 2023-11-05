@@ -45,6 +45,11 @@ box_confidences = []
 classes = []
 class_probs = []
 
+max_confidence = 0
+best_box = None
+best_class = None
+best_class_prob = 0
+
 for output in outputs:
     box_confidence = output[4]
     if box_confidence < BOX_THRESHOLD:
@@ -56,23 +61,17 @@ for output in outputs:
     if class_prob < CLASS_THRESHOLD:
         continue
 
-    cx, cy, w, h = output[:4] * np.array([IMG_WIDTH, IMG_HEIGHT, IMG_WIDTH, IMG_HEIGHT])
-    x = round(cx - w / 2)
-    y = round(cy - h / 2)
-    w, h = round(w), round(h)
+    if box_confidence * class_prob > max_confidence:
+        max_confidence = box_confidence * class_prob
+        best_box = output[:4] * np.array([IMG_WIDTH, IMG_HEIGHT, IMG_WIDTH, IMG_HEIGHT])
+        best_class = class_
+        best_class_prob = class_prob
 
-    boxes.append([x, y, w, h])
-    box_confidences.append(box_confidence)
-    classes.append(class_)
-    class_probs.append(class_prob)
-
-indices = cv2.dnn.NMSBoxes(boxes, box_confidences, BOX_THRESHOLD, BOX_THRESHOLD - 0.1)
-
-for indice in indices:
-    x, y, w, h = boxes[indice]
-    class_name = labels[classes[indice]]
-    score = box_confidences[indice] * class_probs[indice]
-    color = [int(c) for c in colors[classes[indice]]]
+if best_box is not None:
+    x, y, w, h = (best_box).astype(int)
+    class_name = labels[best_class]
+    score = max_confidence
+    color = [int(c) for c in colors[best_class]]
     text_color = (255, 255, 255) if sum(color) < 144 * 3 else (0, 0, 0)
 
     cv2.rectangle(img_padded, (x, y), (x + w, y + h), color, 2)
