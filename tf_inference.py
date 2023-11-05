@@ -74,7 +74,7 @@ for output in outputs:
         score = box_confidence[i]*class_probs[i]
         class_name = classes[i]
 
-        text_color = (255, 255, 255)
+        text_color = (255, 0, 0)
 
         cv2.rectangle(img_padded, (x, y), (x + w, y + h), text_color, 2)
 
