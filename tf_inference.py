@@ -1,8 +1,8 @@
-TEST_FILE = r'data\OurDatasets\HardwareDatasetOne\images\test\HardwareDatasetOne_100248_jpg.rf.dba4a6aaf21219531fafd33cd1748d29.jpg'
-TF_LITE_MODEL = r'runs\train\yolo_cuda_test\weights\best-fp16.tflite'
-LABEL_MAP = r'data\labelmap.txt'
-BOX_THRESHOLD = 0.5
-CLASS_THRESHOLD = 0.5
+TEST_FILE = r'/home/mendel/VIP/VIP-Spring23/test/HardwareDatasetOne_100007_jpg.rf.df4d83e3d1a953a5a37e2d76bd8650e9.jpg'
+TF_LITE_MODEL = r'/home/mendel/VIP/VIP-Spring23/models (edgetpu)/model1_edgetpu.tflite'
+LABEL_MAP = r'sunnylabels.txt'
+BOX_THRESHOLD = 0
+CLASS_THRESHOLD = 0
 LABEL_SIZE = 0.5
 
 import cv2
@@ -39,6 +39,8 @@ interpreter.set_tensor(input_details[0]['index'], input_data)
 interpreter.invoke()
 
 outputs = interpreter.get_tensor(output_details[0]['index'])[0]
+print("outputs:")
+print(outputs)
 
 boxes = []
 box_confidences = []
@@ -65,32 +67,32 @@ for output in outputs:
     box_confidences.append(box_confidence)
     classes.append(class_)
     class_probs.append(class_prob)
+    print(boxes)
+#indices = cv2.dnn.NMSBoxes(boxes, box_confidences, BOX_THRESHOLD, BOX_THRESHOLD - 0.1)
 
-indices = cv2.dnn.NMSBoxes(boxes, box_confidences, BOX_THRESHOLD, BOX_THRESHOLD - 0.1)
+#for indice in indices:
+#    x, y, w, h = boxes[indice]
+#    class_name = labels[classes[indice]]
+#    score = box_confidences[indice] * class_probs[indice]
+#    color = [int(c) for c in colors[classes[indice]]]
+#    text_color = (255, 255, 255) if sum(color) < 144 * 3 else (0, 0, 0)
 
-for indice in indices:
-    x, y, w, h = boxes[indice]
-    class_name = labels[classes[indice]]
-    score = box_confidences[indice] * class_probs[indice]
-    color = [int(c) for c in colors[classes[indice]]]
-    text_color = (255, 255, 255) if sum(color) < 144 * 3 else (0, 0, 0)
+#    cv2.rectangle(img_padded, (x, y), (x + w, y + h), color, 2)
 
-    cv2.rectangle(img_padded, (x, y), (x + w, y + h), color, 2)
+#    label = f'{class_name}: {score * 100:.2f}%'
+#    labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, LABEL_SIZE, 2)
+#    cv2.rectangle(img_padded,
+#                  (x, y + baseLine), (x + labelSize[0], y - baseLine - labelSize[1]),
+#                  color, cv2.FILLED)
+#    cv2.putText(img_padded, label, (x, y), cv2.FONT_HERSHEY_SIMPLEX, LABEL_SIZE, text_color, 1)
 
-    label = f'{class_name}: {score * 100:.2f}%'
-    labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, LABEL_SIZE, 2)
-    cv2.rectangle(img_padded,
-                  (x, y + baseLine), (x + labelSize[0], y - baseLine - labelSize[1]),
-                  color, cv2.FILLED)
-    cv2.putText(img_padded, label, (x, y), cv2.FONT_HERSHEY_SIMPLEX, LABEL_SIZE, text_color, 1)
-
-img_show = img_padded[y_pad: IMG_HEIGHT - y_pad, x_pad: IMG_WIDTH - x_pad]
-cv2.namedWindow('Object detection', cv2.WINDOW_NORMAL)
-cv2.resizeWindow('Object detection',
-                 1024 if IMG_WIDTH > IMG_HEIGHT else round(1024 * IMG_WIDTH / IMG_HEIGHT),
-                 1024 if IMG_HEIGHT > IMG_WIDTH else round(1024 * IMG_HEIGHT / IMG_WIDTH))
-cv2.imshow('Object detection', img_show)
-cv2.imwrite('./result.jpg', img_show)
-cv2.imwrite('./result_yolo.jpg', img_show)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+#img_show = img_padded[y_pad: IMG_HEIGHT - y_pad, x_pad: IMG_WIDTH - x_pad]
+#cv2.namedWindow('Object detection', cv2.WINDOW_NORMAL)
+#cv2.resizeWindow('Object detection',
+#                 1024 if IMG_WIDTH > IMG_HEIGHT else round(1024 * IMG_WIDTH / IMG_HEIGHT),
+#                 1024 if IMG_HEIGHT > IMG_WIDTH else round(1024 * IMG_HEIGHT / IMG_WIDTH))
+#cv2.imshow('Object detection', img_show)
+#cv2.imwrite('./result.jpg', img_show)
+#cv2.imwrite('./result_yolo.jpg', img_show)
+#cv2.waitKey(0)
+#cv2.destroyAllWindows()
