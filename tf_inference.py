@@ -68,6 +68,37 @@ for output in outputs:
     classes.append(class_)
     class_probs.append(class_prob)
     print(boxes)
+
+    for i in range(len(boxes)):
+        x, y, w, h = boxes[i]
+        score = box_confidence[i]*class_probs[i]
+        class_name = classes[i]
+
+        text_color = (255, 255, 255)
+
+        cv2.rectangle(img_padded, (x, y), (x + w, y + h), text_color, 2)
+
+        label = f'{class_name}: {score * 100:.2f}%'
+        labelSize, baseLine = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, LABEL_SIZE, 2)
+        cv2.rectangle(img_padded,
+                     (x, y + baseLine), (x + labelSize[0], y - baseLine - labelSize[1]),
+                     text_color, cv2.FILLED)
+        cv2.putText(img_padded, label, (x, y), cv2.FONT_HERSHEY_SIMPLEX, LABEL_SIZE, text_color, 1)
+
+img_show = img_padded[y_pad: IMG_HEIGHT - y_pad, x_pad: IMG_WIDTH - x_pad]
+cv2.namedWindow('Object detection', cv2.WINDOW_NORMAL)
+cv2.resizeWindow('Object detection',
+                1024 if IMG_WIDTH > IMG_HEIGHT else round(1024 * IMG_WIDTH / IMG_HEIGHT),
+                1024 if IMG_HEIGHT > IMG_WIDTH else round(1024 * IMG_HEIGHT / IMG_WIDTH))
+cv2.imshow('Object detection', img_show)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+
+
+
+# cannot be used in google coral
 #indices = cv2.dnn.NMSBoxes(boxes, box_confidences, BOX_THRESHOLD, BOX_THRESHOLD - 0.1)
 
 #for indice in indices:
