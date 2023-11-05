@@ -58,7 +58,6 @@ for output in outputs:
     if class_prob < CLASS_THRESHOLD:
         continue
 
-<<<<<<< HEAD
     cx, cy, w, h = output[:4] * np.array([IMG_WIDTH, IMG_HEIGHT, IMG_WIDTH, IMG_HEIGHT])
     x = round(cx - w / 2)
     y = round(cy - h / 2)
@@ -97,5 +96,4 @@ for output in outputs:
 #cv2.imwrite('./result_yolo.jpg', img_show)
 #cv2.waitKey(0)
 #cv2.destroyAllWindows()
-=======
->>>>>>> 6a4515fccf9429000de435af58d46a836b8c4275
+
