@@ -2,7 +2,8 @@ import time
 import cv2
 import numpy as np
 
-def start_recording(double time):
+
+def start_recording(times):
     # Set the camera resolution and frame rate
     resolution = (640, 480)
     fps = 20
@@ -17,18 +18,19 @@ def start_recording(double time):
     camera.set(cv2.CAP_PROP_FRAME_HEIGHT, resolution[1])
     camera.set(cv2.CAP_PROP_FPS, fps)
 
-    # Construct the filename with a timestamp and save it to the desired directory
-
-
     # Initialize the video writer with the output filename and codec
-    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-    writer = cv2.VideoWriter(filename, fourcc, fps)
 
     # Record the video and display the frames in a window
     start_time = time.time()
     start_time2 = time.time()
+
+    # Construct the filename with a timestamp and save it to the desired directory
+
     index = 0
-    while time.time() - start_time < time:
+    filename = f"./Video/video_{index}.mp4"
+    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+    writer = cv2.VideoWriter(filename, fourcc, fps)
+    while time.time() - start_time < times:
         filename = f"./Video/video_{index}.mp4"
         if time.time() - start_time2 >= 10:
             # Release the video writer and display a message when the recording is complete
@@ -64,10 +66,8 @@ def start_recording(double time):
         index += 1
         print(f"Video recording saved as:, {filename}")
 
-
-    print ("time between epsilones:", np.subtract(measure2,measure1))
+    print("time between epsilones:", np.subtract(measure2, measure1))
 
     # Release the camera and destroy the window when all recordings are complete
     camera.release()
     cv2.destroyAllWindows()
-
