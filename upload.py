@@ -25,9 +25,12 @@ def upload_thread():
 
     frame_files = []
 
+    start_time = time.time()
+
     while True:
         time.sleep(0.1)
         if isFinished or len(frame_files) > 0:
+            print("upload started")
             frame_dir = f'/home/mendel/VIP/frames/'
             frame_files = [os.path.join(frame_dir, f) for f in os.listdir(frame_dir) if f.endswith('.mp4')]
             print(frame_files)
@@ -36,6 +39,7 @@ def upload_thread():
                     original_name = os.path.basename(frame_file).split('.')
                     s3.upload_file(frame_file, 'fitchain-ai-videos', f'videos_input/{game_id}.{original_name[1]}', ExtraArgs = {'ACL':'public-read'})
                     print('uploaded')
+                    print(f"upload time: {time.time() - start_time}")
                     url = f"https://polished-remotely-troll.ngrok-free.app/Inference/Run_Inference_In_Background/{game_id}"
                     response = requests.post(url)
                     os.remove(frame_file)
