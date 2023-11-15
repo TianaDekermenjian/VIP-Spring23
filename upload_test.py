@@ -60,4 +60,4 @@ def start_recording(times):
     camera.release()
     cv2.destroyAllWindows()
 
-start_recording(52)
+start_recording(24)
