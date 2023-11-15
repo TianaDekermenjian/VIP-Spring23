@@ -29,7 +29,7 @@ def start_recording(times):
     index = 0
     filename = f"./Video/video_{index}.mp4"
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-    writer = cv2.VideoWriter(filename, fourcc, fps, frameSize=(640, 480))
+    writer = cv2.VideoWriter(filename, fourcc, fps, resolution)
     while time.time() - start_time < times:
         filename = f"./Video/video_{index}.mp4"
         if time.time() - start_time2 >= 10:
