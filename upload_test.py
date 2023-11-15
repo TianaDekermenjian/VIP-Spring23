@@ -52,6 +52,7 @@ def start_recording(times):
             writer = cv2.VideoWriter(filename, fourcc, fps, resolution)
 
             measure2.append(time.time())
+            start_time2 = time.time()
 
         ret, frame = camera.read()
         if not ret:
