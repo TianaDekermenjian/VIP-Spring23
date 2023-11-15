@@ -2,7 +2,6 @@ import time
 import cv2
 import numpy as np
 
-
 def start_recording(times):
     # Set the camera resolution and frame rate
     resolution = (640, 480)
@@ -13,7 +12,7 @@ def start_recording(times):
 
     # Initialize the ArduCam USB camera
     camera = cv2.VideoCapture(1)
-    camera.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"mp4v"))
+    #camera.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"mp4v"))
     camera.set(cv2.CAP_PROP_FRAME_WIDTH, resolution[0])
     camera.set(cv2.CAP_PROP_FRAME_HEIGHT, resolution[1])
     camera.set(cv2.CAP_PROP_FPS, fps)
@@ -27,7 +26,7 @@ def start_recording(times):
     # Construct the filename with a timestamp and save it to the desired directory
 
     index = 0
-    filename = f"./Video/video_{index}.mp4"
+    filename = f"/home/mendel/VIP/VIP-Spring23/video_{index}.mp4"
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
     writer = cv2.VideoWriter(filename, fourcc, fps, resolution)
     while time.time() - start_time < times:
