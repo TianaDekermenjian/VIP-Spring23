@@ -49,7 +49,7 @@ def start_recording(times):
 
             # Initialize the video writer with the output filename and codec
             fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-            writer = cv2.VideoWriter(filename, fourcc, fps)
+            writer = cv2.VideoWriter(filename, fourcc, fps, resolution)
 
             measure2.append(time.time())
 
