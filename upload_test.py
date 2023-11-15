@@ -40,6 +40,7 @@ def start_recording(times):
             print(f"Video recording saved as:, {filename}")
             measure1.append(time.time())
 
+            filename = f"/home/mendel/VIP/VIP-Spring23/video_{index}.mp4"
             writer = cv2.VideoWriter(filename, fourcc, fps, resolution)
 
             measure2.append(time.time())
@@ -49,6 +50,7 @@ def start_recording(times):
 
     else:
         writer.release()
+        filename = f"/home/mendel/VIP/VIP-Spring23/video_{index}.mp4"
         index += 1
         print(f"Video recording saved as:, {filename}")
 
