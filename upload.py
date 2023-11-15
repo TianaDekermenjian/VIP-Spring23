@@ -29,10 +29,10 @@ def upload_thread():
     while True:
         time.sleep(0.5)
         if isFinished or len(frame_files) > 0:
+            frame_dir = f'/home/mendel/VIP/frames/'
             frame_files = [os.path.join(frame_dir, f) for f in os.listdir(frame_dir) if f.endswith('.mp4')]
             print(frame_files)
             print("upload started")
-            frame_dir = f'/home/mendel/VIP/frames/'
             for frame_file in frame_files:
                 try:
                     start_time = time.time()
