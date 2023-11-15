@@ -39,8 +39,8 @@ interpreter.set_tensor(input_details[0]['index'], input_data)
 interpreter.invoke()
 
 outputs = interpreter.get_tensor(output_details[0]['index'])[0]
-#print("outputs:")
-#print(outputs)
+print("outputs:")
+print(outputs)
 
 boxes = []
 box_confidences = []
@@ -68,12 +68,10 @@ for output in outputs:
     classes.append(class_)
     class_probs.append(class_prob)
 #    print(boxes)
-print("num detections: ")
-print(len(boxes))
 
 #    for i in range(len(boxes)):
 #        x, y, w, h = boxes[i]
-#        score = box_confidences[i]*class_probs[i]
+#        score = box_confidence[i]*class_probs[i]
 #        class_name = classes[i]
 
 #        text_color = (255, 0, 0)
@@ -96,22 +94,14 @@ print(len(boxes))
 #cv2.waitKey(0)
 #cv2.destroyAllWindows()
 print("boxes: ")
-print(boxes[:5])
-print("box_confidences: ")
+print(boxes[:5]
+)
 print(box_confidences[:5])
-print("classes: ")
 print(classes[:5])
-print("class_probs")
 print(class_probs[:5])
 
-#scores = []
 
-#for i in range(5):
-#    score = box_confidences[i]*class_probs[i]
-#    scores.append(score)
 
-#print("scores: ")
-#print(scores)
 
 # cannot be used in google coral
 #indices = cv2.dnn.NMSBoxes(boxes, box_confidences, BOX_THRESHOLD, BOX_THRESHOLD - 0.1)

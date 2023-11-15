@@ -38,3 +38,4 @@ def start_recording():
     camera.release()
     cv2.destroyAllWindows()
 
+start_recording()
