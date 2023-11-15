@@ -25,7 +25,6 @@ def upload_thread():
 
     frame_files = []
 
-    start_time = time.time()
 
     while True:
         time.sleep(0.5)
@@ -36,6 +35,7 @@ def upload_thread():
             frame_dir = f'/home/mendel/VIP/frames/'
             for frame_file in frame_files:
                 try:
+                    start_time = time.time()
                     original_name = os.path.basename(frame_file).split('.')
                     s3.upload_file(frame_file, 'fitchain-ai-videos', f'videos_input/{game_id}.{original_name[1]}', ExtraArgs = {'ACL':'public-read'})
                     print('uploaded')
