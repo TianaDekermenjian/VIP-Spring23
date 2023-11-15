@@ -71,3 +71,5 @@ def start_recording(times):
     # Release the camera and destroy the window when all recordings are complete
     camera.release()
     cv2.destroyAllWindows()
+
+start_recording(30)
