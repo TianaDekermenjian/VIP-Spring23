@@ -1,0 +1,13 @@
+{
+ "HardwareDatasetOne_100217_jpg.rf.53c549d91e48f6fc9b464d619b6e0c1d_detect": {
+  "box": [
+   240.0,
+   182.0,
+   240.0,
+   182.0
+  ],
+  "conf": 0.7062348127365112,
+  "cls": 0.0,
+  "cls_name": "basketball"
+ }
+}
