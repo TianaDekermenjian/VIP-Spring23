@@ -32,17 +32,17 @@ def upload_thread():
             frame_dir = f'/home/mendel/VIP/frames/'
             frame_files = [os.path.join(frame_dir, f) for f in os.listdir(frame_dir) if f.endswith('.mp4')]
             print(frame_files)
-            print("upload started")
+            print("upload started!")
             for frame_file in frame_files:
                 try:
                     start_time = time.time()
                     original_name = os.path.basename(frame_file).split('.')
                     s3.upload_file(frame_file, 'fitchain-ai-videos', f'videos_input/{game_id}.{original_name[1]}', ExtraArgs = {'ACL':'public-read'})
-                    print('uploaded')
+                    print('uploaded!')
                     print(f"upload time: {time.time() - start_time}")
                     url = f"https://polished-remotely-troll.ngrok-free.app/Inference/Run_Inference_In_Background/{game_id}"
                     response = requests.post(url)
-                    os.remove(frame_file)
+#                    os.remove(frame_file)
                     print(response)
                 except Exception as e:
                     print(e)
@@ -56,7 +56,7 @@ def on_connect():
 def on_start(data):
     global isRecording, game_id
     game_id = data['data']
-    print("Started")
+    print("Started!")
     isRecording = True
     # Set the camera resolution and frame rate
     resolution = (640, 480)
@@ -85,13 +85,13 @@ def on_start(data):
     camera.release()
     out.release()
 
-    print('recording is done')
+    print('recording is done!')
     cv2.destroyAllWindows()
 
 @sio.on('stop_recording')
 def on_stop(data):
     global isRecording, isFinished
-    print("Stopped")
+    print("Stopped!")
     isRecording = False
     isFinished = True
 
