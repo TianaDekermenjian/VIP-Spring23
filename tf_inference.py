@@ -1,5 +1,5 @@
 TEST_FILE = r'/home/mendel/VIP/VIP-Spring23/test/'
-TF_LITE_MODEL = r'/home/mendel/VIP/VIP-Spring23/models (edgetpu)/paul_best-int8_edgetpu.tflite'
+TF_LITE_MODEL = r'/home/mendel/VIP/VIP-Spring23/models-edgetpu/D1M2-full-integer-quant-new_edgetpu.tflite'
 LABEL_MAP = r'sunnylabels.txt'
 BOX_THRESHOLD = 0
 CLASS_THRESHOLD = 0
@@ -15,8 +15,8 @@ from pycoral.utils import dataset
 from pycoral.adapters import common
 from pycoral.adapters import classify
 
-interpreter = edgetpu.make_interpreter(TF_LITE_MODEL)
-#interpreter = tflite.Interpreter(TF_LITE_MODEL, experimental_delegates=[tflite.load_delegate('libedgetpu.so.1')])
+#interpreter = edgetpu.make_interpreter(TF_LITE_MODEL)
+interpreter = tflite.Interpreter(TF_LITE_MODEL, experimental_delegates=[tflite.load_delegate('libedgetpu.so.1')])
 
 interpreter.allocate_tensors()
 
@@ -193,14 +193,14 @@ print(scores)
 #                  color, cv2.FILLED)
 #    cv2.putText(img_padded, label, (x, y), cv2.FONT_HERSHEY_SIMPLEX, LABEL_SIZE, text_color, 1)
 
-#img_show = img_padded[y_pad: IMG_HEIGHT - y_pad, x_pad: IMG_WIDTH - x_pad]
-#cv2.namedWindow('Object detection', cv2.WINDOW_NORMAL)
-#cv2.resizeWindow('Object detection',
-#                 1024 if IMG_WIDTH > IMG_HEIGHT else round(1024 * IMG_WIDTH / IMG_HEIGHT),
-#                 1024 if IMG_HEIGHT > IMG_WIDTH else round(1024 * IMG_HEIGHT / IMG_WIDTH))
-#cv2.imshow('Object detection', img_show)
-#cv2.imwrite('./result.jpg', img_show)
-#cv2.imwrite('./result_yolo.jpg', img_show)
-#cv2.waitKey(0)
-#cv2.destroyAllWindows()
+img_show = img_padded[y_pad: IMG_HEIGHT - y_pad, x_pad: IMG_WIDTH - x_pad]
+cv2.namedWindow('Object detection', cv2.WINDOW_NORMAL)
+cv2.resizeWindow('Object detection',
+                 1024 if IMG_WIDTH > IMG_HEIGHT else round(1024 * IMG_WIDTH / IMG_HEIGHT),
+                 1024 if IMG_HEIGHT > IMG_WIDTH else round(1024 * IMG_HEIGHT / IMG_WIDTH))
+cv2.imshow('Object detection', img_show)
+cv2.imwrite('./result.jpg', img_show)
+cv2.imwrite('./result_yolo.jpg', img_show)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 
