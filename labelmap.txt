@@ -1,2 +1,2 @@
-nc: 3
-names: [‘basketball’, ‘netbasket’, ‘person’]
+nc: 2
+names: [basketball, player]

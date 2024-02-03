@@ -22,6 +22,7 @@ with open(label_file, 'r') as f:
 # load classes
 classes = cfg['names']
 logger.info("Loaded {} classes".format(len(classes)))
+print(classes) 
 
 interpreter = etpu.make_interpreter(model_file)
 interpreter.allocate_tensors()
