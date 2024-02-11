@@ -107,8 +107,8 @@ detections = []
 
 for i in range(output.shape[2]):  # Iterate over the detections
     detection = {
-        'x': output[0, 0, i],
-        'y': output[0, 1, i],
+        'xc': output[0, 0, i],
+        'yc': output[0, 1, i],
         'width': output[0, 2, i],
         'height': output[0, 3, i],
         'class1_confidence': output[0, 4, i],
@@ -126,7 +126,6 @@ for detection in detections:
         filtered_detections.append(detection)
 
 print(len(filtered_detections))
-print(filtered_detections)
 
 # scale coordinates according to image
 pad_w, pad_h = pad
@@ -140,10 +139,10 @@ color =  (255, 0, 0)
 thickness = 3
 
 for filtered_detection in filtered_detections:
-    x1 = int(filtered_detection['x']*img_w)
-    y1 = int(filtered_detection['y']*img_h)
-    x2 = int((filtered_detection['x'] + abs(filtered_detection['width']))*img_w)
-    y2 = int((filtered_detection['y'] + abs(filtered_detection['height']))*img_h)
+    x1 = int(filtered_detection['xc']-filtered_detection['width']/2)*img_w
+    y1 = int(filtered_detection['yc']-filtered_detection['height']/2)*img_h
+    x2 = int(filtered_detection['xc']+filtered_detection['width']/2)*img_w
+    y2 = int(filtered_detection['yc']-filtered_detection['height']/2)*img_h 
 
     cv2.rectangle(img, (x1, y1), (x2, y2), color, thickness)
 
