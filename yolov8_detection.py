@@ -140,10 +140,10 @@ color =  (255, 0, 0)
 thickness = 3
 
 for filtered_detection in filtered_detections:
-    x1 = int(filtered_detection['x']*416)
-    y1 = int(filtered_detection['y']*416)
-    x2 = int((filtered_detection['x'] + filtered_detection['width'])*416)
-    y2 = int((filtered_detection['y'] + filtered_detection['height'])*416)
+    x1 = int(filtered_detection['x']*img_w)
+    y1 = int(filtered_detection['y']*img_h)
+    x2 = int((filtered_detection['x'] + abs(filtered_detection['width']))*img_w)
+    y2 = int((filtered_detection['y'] + abs(filtered_detection['height']))*img_h)
 
     cv2.rectangle(img, (x1, y1), (x2, y2), color, thickness)
 
