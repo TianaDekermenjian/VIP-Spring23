@@ -113,6 +113,8 @@ for detection in detections:
     if confidence1>0.2 or confidence2 >0.2:
         filtered_detections.append(detection)
 
+print(len(filtered_detections))
+
 # scale coordinates according to image
 pad_w, pad_h = pad
 in_h, in_w = input_size
