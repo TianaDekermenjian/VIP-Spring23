@@ -75,7 +75,13 @@ im_padded = cv2.copyMakeBorder(img_resized, 0, delta_h, 0, delta_w, cv2.BORDER_C
 
 # prepare tensor
 im_padded = im_padded.astype(np.float32)
-im_normalized = ((im_padded + 128)/(127+128))*(127+128)-128
+
+min_value = np.min(im_padded)
+max_value = np.max(im_padded)
+new_min = -128
+new_max = 127
+
+im_normalized = ((im_padded - min_value) / (max_value - min_value)) * (new_max - new_min) + new_min
 #im_normalized = im_padded/255.0
 
 if im_normalized.shape[0] == 3:
