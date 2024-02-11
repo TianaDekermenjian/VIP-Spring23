@@ -58,6 +58,11 @@ logger.info("Expected output data type: {}". format(output_data_type))
 # process image
 img = cv2.imread(image_file)
 
+img_h, img_w, c = img.shape
+
+print(img_h)
+print(img_w)
+
 # resize image
 old_size = img.shape[:2]
 ratio = float(input_size[0]/max(old_size))
@@ -135,10 +140,10 @@ color =  (255, 0, 0)
 thickness = 3
 
 for filtered_detection in filtered_detections:
-    x1 = int(filtered_detection['x']*in_w*ratio_w)
-    y1 = int(filtered_detection['y']*in_h*ratio_h)
-    x2 = int((filtered_detection['x'] + filtered_detection['width'])*in_w*ratio_w)
-    y2 = int((filtered_detection['y'] + filtered_detection['height'])*in_h*ratio_h)
+    x1 = int(filtered_detection['x']*416)
+    y1 = int(filtered_detection['y']*416)
+    x2 = int((filtered_detection['x'] + filtered_detection['width'])*416)
+    y2 = int((filtered_detection['y'] + filtered_detection['height'])*416)
 
     cv2.rectangle(img, (x1, y1), (x2, y2), color, thickness)
 
