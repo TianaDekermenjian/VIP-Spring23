@@ -12,9 +12,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("EdgeTPUModel")
 
 script_dir = pathlib.Path(__file__).parent.absolute()
-model_file = os.path.join(script_dir, 'models-edgetpu/D1M2-full-integer-quant-new_edgetpu.tflite')
+model_file = os.path.join(script_dir, 'models-edgetpu/yolov5s-224-D1_edgetpu.tflite')
 label_file = os.path.join(script_dir, 'labelmap.txt')
-image_file = os.path.join(script_dir, 'test/test416.jpg')
+image_file = os.path.join(script_dir, 'image3.jpg')
 
 with open(label_file, 'r') as f:
     cfg = yaml.load(f, Loader=yaml.SafeLoader)
@@ -22,7 +22,7 @@ with open(label_file, 'r') as f:
 # load classes
 classes = cfg['names']
 logger.info("Loaded {} classes".format(len(classes)))
-print(classes) 
+print(classes)
 
 interpreter = etpu.make_interpreter(model_file)
 interpreter.allocate_tensors()
@@ -86,50 +86,62 @@ input_image = input_image[np.newaxis].astype(input_data_type)
 interpreter.set_tensor(input_details[0]['index'], input_image)
 interpreter.invoke()
 
-detections = (common.output_tensor(interpreter, 0).astype('float32') - output_zero) * output_scale
+output = interpreter.get_tensor(output_details[0]["index"])
+output = (output.astype(np.float32) - output_zero) * output_scale
 
-#detections = non_max_suppression(detections, 0.001, 0.1, None, False, 1000)
+#print(output.shape)
 
-if(len(detections)):
-    print("here")
-    detections_scaled=[]
+detections = []
 
-    in_h, in_w = input_size
-    out_h, out_w, _ = img.shape
+for i in range(output.shape[2]):  # Iterate over the detections
+    detection = {
+        'x': output[0, 0, i],
+        'y': output[0, 1, i],
+        'width': output[0, 2, i],
+        'height': output[0, 3, i],
+        'class1_confidence': output[0, 4, i],
+        'class2_confidence': output[0, 5, i],
+    }
+    detections.append(detection)
 
-    ratio_w = out_w/(in_w - delta_w)
-    ratio_h = out_h/(in_h - delta_h)
+filtered_detections = []
 
-    for coord in detections[:,:4]:
-        x1, y1, x2, y2 = coord
-        x1 *= in_w*ratio_w
-        x2 *= in_w*ratio_w
-        y1 *= in_h*ratio_h
-        y2 *= in_h*ratio_h
+for detection in detections:
+    confidence1 = detection['class1_confidence']
+    confidence2 = detection['class2_confidence']
 
-        x1 =np.maximum(0, x1)
-        x2 =np.minimum(out_w, x2)
+    if confidence1>0.4 or confidence2 >0.4:
+        filtered_detections.append(detection)
 
-        y1 = np.maximum(0, y1)
-        y2 = np.minimum(out_h, y2)
+print(len(filtered_detections))
 
-        detections_scaled.append((x1, y1, x2, y2))
+# Print information for the first detection as an example
+print("First Detection:")
+print("x:",filtered_detections[0]['x'])
+print("y:", filtered_detections[0]['y'])
+print("width:", filtered_detections[0]['width'])
+print("height:", filtered_detections[0]['height'])
+print("class1_confidence:", filtered_detections[0]['class1_confidence'])
+print("class2_confidence:", filtered_detections[0]['class2_confidence'])
 
-    detections[:,:4] = np.array(detections_scaled).astype(int)
+# scale coordinates according to image
+pad_w, pad_h = pad
+in_h, in_w = input_size
+out_h, out_w, c = img.shape
 
-    output = {}
+ratio_w = out_w/(in_w - pad_w)
+ratio_h = out_h/(in_h - pad_h)
 
-    s = ""
+color =  (255, 0, 0)
+thickness = 3
 
-    detections[:, -1] = detections[:, -1].astype(int)
+for filtered_detection in filtered_detections:
+    x1 = int(filtered_detections[0]['x']*in_w*ratio_w)
+    y1 = int(filtered_detections[0]['y']*in_h*ratio_h)
+    x2 = int((filtered_detections[0]['x'] + filtered_detections[0]['width'])*in_w*ratio_w)
+    y2 = int((filtered_detections[0]['y'] + filtered_detections[0]['height'])*in_h*ratio_h)
 
-    for c in np.unique(detections[:, -1]):
-        n = (detections[:, -1] == c).sum()
-        s += f"{n} {classes[int(c)]}{'s' * (n > 1)}, "
+    cv2.rectangle(img, (x1, y1), (x2, y2), color, thickness)
 
-    if s != "":
-        s = s.strip()
-        s = s[:-1]
-
-    logger.info("Detected: {}".format(s))
-
+out = "result.jpg"
+cv2.imwrite(out, img)
