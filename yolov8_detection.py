@@ -81,8 +81,8 @@ max_value = np.max(im_padded)
 new_min = -128
 new_max = 127
 
-im_normalized = ((im_padded - min_value) / (max_value - min_value)) * (new_max - new_min) + new_min
-#im_normalized = im_padded/255.0
+#im_normalized = ((im_padded - min_value) / (max_value - min_value)) * (new_max - new_min) + new_min
+im_normalized = im_padded/255.0
 
 if im_normalized.shape[0] == 3:
     im_normalized = im_normalized.transpose((1,2,0))
@@ -117,7 +117,7 @@ for detection in detections:
     confidence1 = detection['class1_confidence']
     confidence2 = detection['class2_confidence']
 
-    if confidence1>0.01 or confidence2 >0.01:
+    if confidence1>0.5 or confidence2 >0.5:
         filtered_detections.append(detection)
 
 print(len(filtered_detections))
