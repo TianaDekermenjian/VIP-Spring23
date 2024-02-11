@@ -110,19 +110,8 @@ for detection in detections:
     confidence1 = detection['class1_confidence']
     confidence2 = detection['class2_confidence']
 
-    if confidence1>0.4 or confidence2 >0.4:
+    if confidence1>0.2 or confidence2 >0.2:
         filtered_detections.append(detection)
-
-print(len(filtered_detections))
-
-# Print information for the first detection as an example
-print("First Detection:")
-print("x:",filtered_detections[0]['x'])
-print("y:", filtered_detections[0]['y'])
-print("width:", filtered_detections[0]['width'])
-print("height:", filtered_detections[0]['height'])
-print("class1_confidence:", filtered_detections[0]['class1_confidence'])
-print("class2_confidence:", filtered_detections[0]['class2_confidence'])
 
 # scale coordinates according to image
 pad_w, pad_h = pad
