@@ -75,7 +75,8 @@ im_padded = cv2.copyMakeBorder(img_resized, 0, delta_h, 0, delta_w, cv2.BORDER_C
 
 # prepare tensor
 im_padded = im_padded.astype(np.float32)
-im_normalized = im_padded/255.0
+im_normalized = ((im_padded + 128)/(127+128))*(127+128)-128
+#im_normalized = im_padded/255.0
 
 if im_normalized.shape[0] == 3:
     im_normalized = im_normalized.transpose((1,2,0))
@@ -110,7 +111,7 @@ for detection in detections:
     confidence1 = detection['class1_confidence']
     confidence2 = detection['class2_confidence']
 
-    if confidence1>0.5 or confidence2 >0.5:
+    if confidence1>0.01 or confidence2 >0.01:
         filtered_detections.append(detection)
 
 print(len(filtered_detections))
