@@ -110,10 +110,11 @@ for detection in detections:
     confidence1 = detection['class1_confidence']
     confidence2 = detection['class2_confidence']
 
-    if confidence1>0.2 or confidence2 >0.2:
+    if confidence1>0.1 or confidence2 >0.1:
         filtered_detections.append(detection)
 
 print(len(filtered_detections))
+print(filtered_detections)
 
 # scale coordinates according to image
 pad_w, pad_h = pad
@@ -127,10 +128,10 @@ color =  (255, 0, 0)
 thickness = 3
 
 for filtered_detection in filtered_detections:
-    x1 = int(filtered_detections[0]['x']*in_w*ratio_w)
-    y1 = int(filtered_detections[0]['y']*in_h*ratio_h)
-    x2 = int((filtered_detections[0]['x'] + filtered_detections[0]['width'])*in_w*ratio_w)
-    y2 = int((filtered_detections[0]['y'] + filtered_detections[0]['height'])*in_h*ratio_h)
+    x1 = int(filtered_detection['x']*in_w*ratio_w)
+    y1 = int(filtered_detection['y']*in_h*ratio_h)
+    x2 = int((filtered_detection['x'] + filtered_detection['width'])*in_w*ratio_w)
+    y2 = int((filtered_detection['y'] + filtered_detection['height'])*in_h*ratio_h)
 
     cv2.rectangle(img, (x1, y1), (x2, y2), color, thickness)
 
