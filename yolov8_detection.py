@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("EdgeTPUModel")
 
 script_dir = pathlib.Path(__file__).parent.absolute()
-model_file = os.path.join(script_dir, 'models-edgetpu/yolov5s-224-D1_edgetpu.tflite')
+model_file = os.path.join(script_dir, 'models-edgetpu/yolov8s-224-D1_edgetpu.tflite')
 label_file = os.path.join(script_dir, 'labelmap.txt')
 image_file = os.path.join(script_dir, 'image3.jpg')
 
@@ -110,7 +110,7 @@ for detection in detections:
     confidence1 = detection['class1_confidence']
     confidence2 = detection['class2_confidence']
 
-    if confidence1>0.1 or confidence2 >0.1:
+    if confidence1>0.5 or confidence2 >0.5:
         filtered_detections.append(detection)
 
 print(len(filtered_detections))
