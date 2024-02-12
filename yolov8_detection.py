@@ -139,12 +139,27 @@ color =  (255, 0, 0)
 thickness = 3
 
 for filtered_detection in filtered_detections:
-    x1 = int(filtered_detection['xc']-abs(filtered_detection['width'])/2)*img_w
-    y1 = int(filtered_detection['yc']-abs(filtered_detection['height'])/2)*img_h
-    x2 = int(filtered_detection['xc']+abs(filtered_detection['width'])/2)*img_w
-    y2 = int(filtered_detection['yc']+abs(filtered_detection['height'])/2)*img_h 
+    x1 = filtered_detection['xc']-filtered_detection['width']/2
+    y1 = filtered_detection['yc']-filtered_detection['height']/2
+    x2 = filtered_detection['xc']-filtered_detection['width']/2
+    y2 = filtered_detection['yc']-filtered_detection['height']/2
 
-    cv2.rectangle(img, (x1, y1), (x2, y2), color, thickness)
+    x1_scaled = int(x1*img_w)
+    y1_scaled = int(y1*img_h)
+    x2_scaled = int(x2*img_w)
+    y2_scaled = int(y2*img_h)
+
+    coord1 = max(0, x1_scaled)
+    coord2 = max(0, y1_scaled)
+    coord3 = min(img_w, x2_scaled)
+    coord4 = min(img_h, y2_scaled)
+
+    print(coord1)
+    print(coord2)
+    print(coord3)
+    print(coord4)
+
+    cv2.rectangle(img, (coord1, coord2), (coord3, coord4), color, thickness)
 
 out = "result.jpg"
 cv2.imwrite(out, img)
