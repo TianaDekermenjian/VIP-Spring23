@@ -22,7 +22,6 @@ with open(label_file, 'r') as f:
 # load classes
 classes = cfg['names']
 logger.info("Loaded {} classes".format(len(classes)))
-print(classes)
 
 interpreter = etpu.make_interpreter(model_file)
 interpreter.allocate_tensors()
@@ -96,14 +95,8 @@ nms_result = non_max_suppression(output, 0.5, 0, None, False, 10000)
 
 detections = nms_result[0]
 
-print(detections.shape)
-print(detections)
-
 ratio_w = img_w/(input_size[0] - pad_w)
 ratio_h = img_h/(input_size[1] - pad_h)
-
-print("before scaling")
-print(detections[:5,:4])
 
 scaled_coordinates = []
 
@@ -113,10 +106,17 @@ if len(detections):
 
         x1_scaled = max(0, int((x1*input_size[0]*ratio_w)))
         y1_scaled = max(0, int((y1*input_size[1]*ratio_h)))
-        x2_scaled = min(img_w, int((x2*input_size[0]*ratio_w)))
-        y2_scaled = min(img_h ,int((y2*input_size[1]*ratio_h)))
+        x2_scaled = min(int(img_w), int((x2*input_size[0]*ratio_w)))
+        y2_scaled = min(int(img_h) ,int((y2*input_size[1]*ratio_h)))
 
         scaled_coordinates.append((x1_scaled, y1_scaled, x2_scaled, y2_scaled))
+
+        cv2.rectangle(img, (x1_scaled, y1_scaled), (x2_scaled, y2_scaled), [100, 100, 100], 2)
+
+    cv2.imshow("Detections:", img)
+
+    if cv2.waitKey(1) == ord('q'):
+        break
 
     detections[:,:4] = scaled_coordinates
 
@@ -132,6 +132,4 @@ if len(detections):
 
     logger.info("Detected: {}".format(s))
 
-print("after scaling")
-print(detections[:5,:4])
-
+cv2.destroyAllWindows()
