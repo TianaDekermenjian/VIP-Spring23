@@ -10,9 +10,9 @@ pwm.duty_cycle = 0.05
 pwm.enable()
 
 # Define pulse widths for left, middle, and right positions
-left_pulse = 0.97
-middle_pulse = 0.93
-right_pulse = 0.89
+left_pulse = 0.95
+middle_pulse = 0.925
+right_pulse = 0.9
 
 pwm.duty_cycle = middle_pulse
 
