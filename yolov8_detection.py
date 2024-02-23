@@ -60,9 +60,6 @@ img = cv2.imread(image_file)
 
 img_h, img_w, c = img.shape
 
-print(img_h)
-print(img_w)
-
 # resize image
 old_size = img.shape[:2]
 ratio = float(input_size[0]/max(old_size))
@@ -100,8 +97,6 @@ interpreter.invoke()
 
 output = interpreter.get_tensor(output_details[0]["index"])
 output = (output.astype(np.float32) - output_zero) * output_scale
-
-#print(output.shape)
 
 detections = []
 
