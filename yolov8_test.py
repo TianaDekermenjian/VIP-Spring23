@@ -36,7 +36,7 @@ input_zero = input_details[0]['quantization'][1]  #quantization parameter
 logger.info("Input scale: {}".format(input_scale))
 logger.info("Input zero-point: {}".format(input_zero))
 
-input_size = common.input_size(interpreter) #input tensor size
+input_size = common.input_size(interpreter) #input image size
 
 logger.info("Image size: {}".format(input_size))
 
@@ -61,23 +61,29 @@ img = cv2.imread(image_file)
 img_h, img_w, c = img.shape
 
 # resize image
-original_image_size = img.shape[:2]
-ratio = float(input_size[0]/max(original_image_size))
-new_size = tuple([int(x*ratio) for x in original_image_size])
+old_size = img.shape[:2]
+ratio = float(input_size[0]/max(old_size))
+new_size = tuple([int(x*ratio) for x in old_size])
 
 img_resized = cv2.resize(img, (new_size[1], new_size[0]))
 
 # pad image
-pad_w = input_size[0] - new_size[1]
-pad_h = input_size[0] - new_size[0]
-pad = (pad_w, pad_h)
+delta_w = input_size[0] - new_size[1]
+delta_h = input_size[0] - new_size[0]
+pad = (delta_w, delta_h)
 color = [100, 100, 100]
 
-im_padded = cv2.copyMakeBorder(img_resized, 0, pad_h, 0, pad_w, cv2.BORDER_CONSTANT, value=color)
+im_padded = cv2.copyMakeBorder(img_resized, 0, delta_h, 0, delta_w, cv2.BORDER_CONSTANT, value=color)
 
 # prepare tensor
 im_padded = im_padded.astype(np.float32)
 
+min_value = np.min(im_padded)
+max_value = np.max(im_padded)
+new_min = -128
+new_max = 127
+
+#im_normalized = ((im_padded - min_value) / (max_value - min_value)) * (new_max - new_min) + new_min
 im_normalized = im_padded/255.0
 
 if im_normalized.shape[0] == 3:
@@ -92,46 +98,63 @@ interpreter.invoke()
 output = interpreter.get_tensor(output_details[0]["index"])
 output = (output.astype(np.float32) - output_zero) * output_scale
 
-nms_result = non_max_suppression(output, 0.5, 0, None, False, 10000)
+detections = []
 
-detections = nms_result[0]
+for i in range(output.shape[2]):  # Iterate over the detections
+    detection = {
+        'xc': output[0, 0, i],
+        'yc': output[0, 1, i],
+        'width': output[0, 2, i],
+        'height': output[0, 3, i],
+        'class1_confidence': output[0, 4, i],
+        'class2_confidence': output[0, 5, i],
+    }
+    detections.append(detection)
 
-print(detections.shape)
-print(detections)
+filtered_detections = []
 
-ratio_w = img_w/(input_size[0] - pad_w)
-ratio_h = img_h/(input_size[1] - pad_h)
+for detection in detections:
+    confidence1 = detection['class1_confidence']
+    confidence2 = detection['class2_confidence']
 
-print("before scaling")
-print(detections[:5,:4])
+    if confidence1>0.5 or confidence2 >0.5:
+        filtered_detections.append(detection)
 
-scaled_coordinates = []
+print(len(filtered_detections))
 
-if len(detections):
-    for coordinates in detections[:,:4]:
-        x1, y1, x2, y2 = coordinates
+# scale coordinates according to image
+pad_w, pad_h = pad
+in_h, in_w = input_size
+out_h, out_w, c = img.shape
 
-        x1_scaled = max(0, int((x1*input_size[0]*ratio_w)))
-        y1_scaled = max(0, int((y1*input_size[1]*ratio_h)))
-        x2_scaled = min(img_w, int((x2*input_size[0]*ratio_w)))
-        y2_scaled = min(img_h ,int((y2*input_size[1]*ratio_h)))
+ratio_w = out_w/(in_w - pad_w)
+ratio_h = out_h/(in_h - pad_h)
 
-        scaled_coordinates.append((x1_scaled, y1_scaled, x2_scaled, y2_scaled))
+color =  (255, 0, 0)
+thickness = 3
 
-    detections[:,:4] = scaled_coordinates
+for filtered_detection in filtered_detections:
+    x1 = filtered_detection['xc']-filtered_detection['width']/2
+    y1 = filtered_detection['yc']-filtered_detection['height']/2
+    x2 = filtered_detection['xc']-filtered_detection['width']/2
+    y2 = filtered_detection['yc']-filtered_detection['height']/2
 
-    s = ""
+    x1_scaled = int(x1*img_w)
+    y1_scaled = int(y1*img_h)
+    x2_scaled = int(x2*img_w)
+    y2_scaled = int(y2*img_h)
 
-    for c in np.unique(detections[:, -1]):
-        n = (detections[:, -1] == c).sum()
-        s += f"{n} {classes[int(c)]}{'s' * (n > 1)}, " 
+    coord1 = max(0, x1_scaled)
+    coord2 = max(0, y1_scaled)
+    coord3 = min(img_w, x2_scaled)
+    coord4 = min(img_h, y2_scaled)
 
-    if s != "":
-        s = s.strip()
-        s = s[:-1]
+    print(coord1)
+    print(coord2)
+    print(coord3)
+    print(coord4)
 
-    logger.info("Detected: {}".format(s))
+    cv2.rectangle(img, (coord1, coord2), (coord3, coord4), color, thickness)
 
-print("after scaling")
-print(detections[:5,:4])
-
+out = "result.jpg"
+cv2.imwrite(out, img)
