@@ -91,7 +91,7 @@ interpreter.invoke()
 output = interpreter.get_tensor(output_details[0]["index"])
 output = (output.astype(np.float32) - output_zero) * output_scale
 
-nms_result = non_max_suppression(output, 0.5, 0, None, False, 10000)
+nms_result = non_max_suppression(output, 0.7, 0, None, False, 10000)
 
 detections = nms_result[0]
 
@@ -111,12 +111,7 @@ if len(detections):
 
         scaled_coordinates.append((x1_scaled, y1_scaled, x2_scaled, y2_scaled))
 
-        cv2.rectangle(img, (x1_scaled, y1_scaled), (x2_scaled, y2_scaled), [100, 100, 100], 2)
-
-    cv2.imshow("Detections:", img)
-
-    if cv2.waitKey(1) == ord('q'):
-        break
+        cv2.rectangle(img, (x1_scaled, y1_scaled), (x2_scaled, y2_scaled), [0, 0, 100], 2)
 
     detections[:,:4] = scaled_coordinates
 
@@ -131,5 +126,9 @@ if len(detections):
         s = s[:-1]
 
     logger.info("Detected: {}".format(s))
+
+cv2.imshow("Detection", img)
+
+cv2.waitKey(0)
 
 cv2.destroyAllWindows()
