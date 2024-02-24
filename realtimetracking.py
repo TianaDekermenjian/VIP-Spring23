@@ -3,6 +3,7 @@ import cv2
 import yaml
 import pathlib
 import logging
+import argparse
 import numpy as np
 import pycoral.utils.edgetpu as etpu
 from pycoral.adapters import common
@@ -11,8 +12,19 @@ from nms import non_max_suppression
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("EdgeTPUModel")
 
+parser = argparse.ArgumentParser("EdgeTPU test runner")
+
+parser.add_argument("--model", "-m", help="weights file", required=True)
+parser.add_argument("--image", "-i", type=str, help="Image file to run detection on")
+parser.add_argument("--display", "-d", action='store_true', help="Display detection on monitor")
+parser.add_argument("--stream", "-s", action='store_true', help="Process video stream in real-time")
+parser.add_argument("--conf", "-ct", type=float, default=0.5, help="Detection confidence threshold")
+parser.add_argument("--iou", "-it", type=float, defualt=0.1, help="Detections IOU threshold")
+
+args = parser.parse_args()
+
 script_dir = pathlib.Path(__file__).parent.absolute()
-model_file = os.path.join(script_dir, 'models-edgetpu/yolov5s-224-D1_edgetpu.tflite')
+#model_file = os.path.join(script_dir, 'models-edgetpu/yolov5s-224-D1_edgetpu.tflite')
 label_file = os.path.join(script_dir, 'labelmap.txt')
 image_file = os.path.join(script_dir, 'image2.jpg')
 
@@ -23,7 +35,7 @@ with open(label_file, 'r') as f:
 classes = cfg['names']
 logger.info("Loaded {} classes".format(len(classes)))
 
-interpreter = etpu.make_interpreter(model_file)
+interpreter = etpu.make_interpreter(args.model)
 interpreter.allocate_tensors()
 
 # input tensor details
@@ -127,8 +139,7 @@ if len(detections):
 
     logger.info("Detected: {}".format(s))
 
-cv2.imshow("Detection", img)
-
-cv2.waitKey(0)
-
-cv2.destroyAllWindows()
+if(args.display):
+    cv2.imshow("Detection", img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
