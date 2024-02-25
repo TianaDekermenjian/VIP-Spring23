@@ -53,15 +53,17 @@ if(args.image) is not None:
             wt += args.wp
 
         label = f'{classes[c]} {conf:.2f}'
-        weight = f"Weight of frame: {wt}"
-
-        (text_width, text_height), baseline = cv2.getTextSize(weight, 0, 1, 2)
-        text_x = int((width - text_width) / 2)
-        text_y = text_height + 10
 
         cv2.rectangle(img, (int(x1), int(y1)), (int(x2), int(y2)), [0, 0, 255], 2)
         cv2.putText(img, label, (int(x1), int(y1-2)), 0, 0.5, (255, 255, 255), 1, lineType=cv2.LINE_AA)
-        cv2.putText(img, weight, (text_x, text_y), 0, 0.5, (255, 255, 255), 1, lineType=cv2.LINE_AA)
+
+    weight = f"Weight of frame: {wt}"
+
+    (text_width, text_height), baseline = cv2.getTextSize(weight, 0, 1, 2)
+    text_x = int(width/2 - text_width/2)
+    text_y = text_height + 10
+
+    cv2.putText(img, weight, (text_x, text_y), 0, 0.5, (0, 0, 255), 1, lineType=cv2.LINE_AA)
 
     s = ""
 
