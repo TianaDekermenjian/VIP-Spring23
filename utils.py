@@ -83,16 +83,17 @@ class YOLOv5s:
         scaled_coordinates = []
 
         if len(detections):
-            for coordinates in detections[:,:4]:
-                x1, y1, x2, y2 = coordinates
+            for detection in detections:
+                x1, y1, x2, y2, conf, class_id = detection
 
                 x1_scaled = max(0, (x1*self.input_size[0]*ratio_w))
                 y1_scaled = max(0, (y1*self.input_size[1]*ratio_h))
                 x2_scaled = min(self.frame_w, (x2*self.input_size[0]*ratio_w))
                 y2_scaled = min(self.frame_h, (y2*self.input_size[1]*ratio_h))
 
-                scaled_coordinates.append((int(x1_scaled), int(y1_scaled), int(x2_scaled), int(y2_scaled)))
+                if(x1_scaled == x2_scaled or y1_scaled == y2_scaled):
+                    continue
 
-            detections[:,:4] = scaled_coordinates
+                scaled_coordinates.append((int(x1_scaled), int(y1_scaled), int(x2_scaled), int(y2_scaled), conf, class_id))
 
-        return detections
+        return np.array(scaled_coordinates)
