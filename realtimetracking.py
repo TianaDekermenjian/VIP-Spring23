@@ -59,8 +59,10 @@ if(args.image) is not None:
 
     weight = f"Weight of frame: {wt}"
 
-    text_x = int(width/2)
-    text_y = 10
+    (text_width, text_height), baseline = cv2.getTextSize(weight, 0, 1, 2)
+
+    text_x = int((width - text_width) / 2)
+    text_y = text_height + 10
 
     cv2.putText(img, weight, (text_x, text_y), 0, 0.5, (0, 0, 255), 1, lineType=cv2.LINE_AA)
 
