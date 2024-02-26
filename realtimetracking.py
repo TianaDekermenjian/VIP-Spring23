@@ -1,5 +1,6 @@
 import os
 import cv2
+import time
 import logging
 import argparse
 import numpy as np
@@ -15,6 +16,8 @@ parser.add_argument("--image", "-i", type=str, help="Image file to run detection
 parser.add_argument("--labels", "-l", type=str, required=True, help="Labels file")
 parser.add_argument("--display", "-d", action='store_true', help="Display detection on monitor")
 parser.add_argument("--stream", "-s", action='store_true', help="Process video stream in real-time")
+parser.add_argument("--device", "-dev", type=int, default=1, help="Camera to process feed from (0, for Coral Camera, 1 for USB")
+parser.add_argument("--time", "-t", type = int, default = 300, help="Length of video to record")
 parser.add_argument("--conf", "-ct", type=float, default=0.5, help="Detection confidence threshold")
 parser.add_argument("--iou", "-it", type=float, default=0.1, help="Detections IOU threshold")
 parser.add_argument("--wb", "-b", type=int, default=10, help = "Weight of basketball")
@@ -38,33 +41,9 @@ if(args.image) is not None:
 
     detections = model.postprocess(output)
 
-    wt = 0
-
     height, width, _ = img.shape
 
-    for detection in detections:
-        x1, y1, x2, y2, conf, class_id = detection
-
-        c = int(class_id)
-
-        if c == 0:
-            wt += args.wb
-        elif c == 1:
-            wt += args.wp
-
-        label = f'{classes[c]} {conf:.2f}'
-
-        cv2.rectangle(img, (int(x1), int(y1)), (int(x2), int(y2)), [0, 0, 255], 2)
-        cv2.putText(img, label, (int(x1), int(y1-2)), 0, 0.5, (255, 255, 255), 1, lineType=cv2.LINE_AA)
-
-    weight = f"Weight of frame: {wt}"
-
-    (text_width, text_height), baseline = cv2.getTextSize(weight, 0, 1, 2)
-
-    text_x = int(width/4 + 30)
-    text_y = text_height + 10
-
-    cv2.putText(img, weight, (text_x, text_y), 0, 0.5, (0, 0, 255), 1, lineType=cv2.LINE_AA)
+    output_img = model.draw_bbox(img, detections, args.wb, args.wp)
 
     s = ""
 
@@ -82,9 +61,68 @@ if(args.image) is not None:
     output_filename = filename + "_result"
     output_path = output_filename + extension
 
-    cv2.imwrite(output_path, img)
+    cv2.imwrite(output_path, output_img)
 
     if(args.display):
-        cv2.imshow("Detection", img)
+        cv2.imshow("Detection", output_img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
+
+elif (args.stream):
+    logger.info("Opening stream on device: {}".format(args.device))
+
+    cam = cv2.VideoCapture(args.device)
+
+    start = time.time()
+    start2 = time.time()
+
+    fps = 20
+    resolution = (752, 416)
+
+    index = 0
+    filename = f"/home/mendel/streams/video_{index}.mp4"
+
+    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+    writer = cv2.VideoWriter(filename, fourcc, fps, resolution)
+
+    while time.time()-start< args.time:
+        try:
+            res, frame = cam.read()
+
+            if res is False:
+                logger.error("Empty image received")
+                break
+
+            else:
+                input = model.preprocess_frame(frame)
+
+                output = model.inference(input)
+
+                detections = model.postprocess(output)
+
+                writer.write(full_image)
+
+                if time.time()-start2 >=17:
+                    writer.release()
+                    index += 1
+
+                    filename = f"/home/mendel/streams/video_{index}.mp4"
+
+                    writer = cv2.VideoWriter(filename, fourcc, fpss, resolution)
+
+                    start2 = time.time()
+
+                cv2.waitKey(1)
+
+        except KeyboardInterrupt:
+            break
+
+    else:
+        writer.release()
+
+        filename = f"/home/mendel/streams/video_{index}.mp4"
+        index += 1
+
+    cam.release()
+    cv2.destroyAllWindows()
+

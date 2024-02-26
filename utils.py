@@ -30,9 +30,9 @@ class YOLOv5s:
         with open(label_file, 'r') as f:
             cfg = yaml.load(f, Loader=yaml.SafeLoader)
 
-        classes = cfg['names']
+        self.classes = cfg['names']
 
-        return classes
+        return self.classes
 
     def preprocess_frame(self, frame):
         self.frame = cv2.imread(frame)
@@ -97,3 +97,32 @@ class YOLOv5s:
                 scaled_coordinates.append((int(x1_scaled), int(y1_scaled), int(x2_scaled), int(y2_scaled), conf, class_id))
 
         return np.array(scaled_coordinates)
+
+    def draw_bbox(self, img, detections, wb, wp):
+        wt = 0
+
+        for detection in detections:
+            x1, y1, x2, y2, conf, class_id = detection
+
+            c = int(class_id)
+
+            if c == 0:
+                wt += wb
+            elif c == 1:
+                wt += wp
+
+            label = f'{self.classes[c]} {conf:.2f}'
+
+            cv2.rectangle(img, (int(x1), int(y1)), (int(x2), int(y2)), [0, 0, 255], 2)
+            cv2.putText(img, label, (int(x1), int(y1-2)), 0, 0.5, (255, 255, 255), 1, lineType=cv2.LINE_AA)
+
+        weight = f"Weight of frame: {wt}"
+
+        (text_width, text_height), baseline = cv2.getTextSize(weight, 0, 1, 2)
+
+        text_x = int(img.shape[1]/4 + 30)
+        text_y = text_height + 10
+
+        cv2.putText(img, weight, (text_x, text_y), 0, 0.5, (0, 0, 255), 1, lineType=cv2.LINE_AA)
+
+        return img
