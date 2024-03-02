@@ -41,8 +41,6 @@ if(args.image) is not None:
 
     detections = model.postprocess(output)
 
-    height, width, _ = img.shape
-
     output_img = model.draw_bbox(img, detections, args.wb, args.wp)
 
     s = ""
@@ -100,7 +98,9 @@ elif (args.stream):
 
                 detections = model.postprocess(output)
 
-                writer.write(full_image)
+                output_frame = model.draw_bbox(frame, detections, args.wb, args.wp)
+
+                writer.write(output_frame)
 
                 if time.time()-start2 >=17:
                     writer.release()
