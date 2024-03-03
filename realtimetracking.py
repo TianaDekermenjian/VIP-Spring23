@@ -4,7 +4,9 @@ import time
 import logging
 import argparse
 import numpy as np
+from PID import PID
 from utils import YOLOv5s
+from periphery import PWM
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("EdgeTPUModel")
@@ -23,6 +25,17 @@ parser.add_argument("--iou", "-it", type=float, default=0.1, help="Detections IO
 parser.add_argument("--wb", "-b", type=int, default=10, help = "Weight of basketball")
 parser.add_argument("--wp", "-p", type=int, default=7, help = "Weight of player")
 args = parser.parse_args()
+
+controller = PID(0.000015, 0, 0.000001)
+
+pwm = PWM(1, 0)
+
+pwm.frequency = 50
+pwm.duty_cycle = 0.9
+
+pwm.enable()
+
+time.sleep(2)
 
 model = YOLOv5s(args.model, args.labels, args.conf, args.iou)
 
@@ -102,17 +115,45 @@ elif (args.stream):
 
                 writer.write(output_frame)
 
+                s = ""
+
+                for c in np.unique(detections[:, -1]):
+                    n = (detections[:, -1] == c).sum()
+                    s += f"{n} {classes[int(c)]}{'s' * (n > 1)}, "
+
+                if s != "":
+                    s = s.strip()
+                    s = s[:-1]
+
+                logger.info("Detected: {}".format(s))
+
+                if len(detections) >= 1:
+                    center_frame = frame.shape[1] / 2
+
+                    center_obj = (detections[0] + detections[2])/2
+
+                    error = center_obj - center_frame
+                    corr = controller(error)
+
+                    pwm.duty_cycle = np.clip(pwm.duty_cycle + corr, 0.865, 0.965)
+                    print(corr, error, pwm.duty_cycle)
+
                 if time.time()-start2 >=17:
                     writer.release()
                     index += 1
 
                     filename = f"/home/mendel/streams/video_{index}.mp4"
 
-                    writer = cv2.VideoWriter(filename, fourcc, fpss, resolution)
+                    writer = cv2.VideoWriter(filename, fourcc, fps, resolution)
 
                     start2 = time.time()
 
                 cv2.waitKey(1)
+
+                if(args.display):
+                    cv2.imshow("Detection", output_img)
+                    cv2.waitKey(0)
+                    cv2.destroyAllWindows()
 
         except KeyboardInterrupt:
             break
