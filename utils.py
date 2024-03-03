@@ -98,7 +98,7 @@ class YOLOv5s:
 
         return np.array(scaled_coordinates)
 
-    def draw_bbox(self, img, detections, wb, wp):
+    def draw_bbox_weights(self, img, detections, wb, wp):
         wt = 0
 
         for detection in detections:
@@ -124,5 +124,18 @@ class YOLOv5s:
         text_y = text_height + 10
 
         cv2.putText(img, weight, (text_x, text_y), 0, 0.5, (0, 0, 255), 1, lineType=cv2.LINE_AA)
+
+        return img, wt
+
+    def draw_bbox(self, img, detections):
+        for detection in detections:
+            x1, y1, x2, y2, conf, class_id = detection
+
+            c = int(class_id)
+
+            label = f'{self.classes[c]} {conf:.2f}'
+
+            cv2.rectangle(img, (int(x1), int(y1)), (int(x2), int(y2)), [0, 0, 255], 2)
+            cv2.putText(img, label, (int(x1), int(y1-2)), 0, 0.5, (255, 255, 255), 1, lineType=cv2.LINE_AA)
 
         return img

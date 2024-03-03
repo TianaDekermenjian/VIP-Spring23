@@ -14,6 +14,7 @@ logger = logging.getLogger("EdgeTPUModel")
 parser = argparse.ArgumentParser("EdgeTPU test runner")
 
 parser.add_argument("--model", "-m", help="Weights file", required=True)
+parser.add_argument("--image", "-i", type=str, help="Image file to run detection on")
 parser.add_argument("--labels", "-l", type=str, required=True, help="Labels file")
 parser.add_argument("--display", "-d", action='store_true', help="Display detection on monitor")
 parser.add_argument("--stream", "-s", action='store_true', help="Process video stream in real-time")
@@ -21,6 +22,8 @@ parser.add_argument("--device", "-dev", type=int, default=1, help="Camera to pro
 parser.add_argument("--time", "-t", type = int, default = 300, help="Length of video to record")
 parser.add_argument("--conf", "-ct", type=float, default=0.5, help="Detection confidence threshold")
 parser.add_argument("--iou", "-it", type=float, default=0.1, help="Detections IOU threshold")
+parser.add_argument("--wb", "-b", type=int, default=10, help = "Weight of basketball")
+parser.add_argument("--wp", "-p", type=int, default=7, help = "Weight of player")
 args = parser.parse_args()
 
 controller = PID(0.000015, 0, 0.000001)
@@ -40,7 +43,43 @@ classes = model.load_classes(args.labels)
 
 logger.info("Loaded {} classes".format(len(classes)))
 
-if (args.stream):
+if(args.image) is not None:
+    logger.info("Testing on input image: {}".format(args.image))
+
+    img = cv2.imread(args.image)
+
+    input_image = model.preprocess_frame(args.image)
+
+    output = model.inference(input_image)
+
+    detections = model.postprocess(output)
+
+    output_img = model.draw_bbox(img, detections, args.wb, args.wp)
+
+    s = ""
+
+    for c in np.unique(detections[:, -1]):
+        n = (detections[:, -1] == c).sum()
+        s += f"{n} {classes[int(c)]}{'s' * (n > 1)}, "
+
+    if s != "":
+        s = s.strip()
+        s = s[:-1]
+
+    logger.info("Detected: {}".format(s))
+
+    filename, extension = os.path.splitext(args.image)
+    output_filename = filename + "_result"
+    output_path = output_filename + extension
+
+    cv2.imwrite(output_path, output_img)
+
+    if(args.display):
+        cv2.imshow("Detection", output_img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+elif (args.stream):
     logger.info("Opening stream on device: {}".format(args.device))
 
     cam = cv2.VideoCapture(args.device)
@@ -72,7 +111,7 @@ if (args.stream):
 
                 detections = model.postprocess(output)
 
-                output_frame = model.draw_bbox(frame, detections)
+                output_frame = model.draw_bbox(frame, detections, args.wb, args.wp)
 
                 writer.write(output_frame)
 
