@@ -91,7 +91,7 @@ if (args.stream):
                 if len(detections) >= 1:
                     center_frame = frame.shape[1] / 2
 
-                    center_obj = (detections[0] + detections[2])/2
+                    center_obj = (detections[0][0] + detections[0][2])/2
 
                     error = center_obj - center_frame
                     corr = controller(error)
