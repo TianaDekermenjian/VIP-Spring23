@@ -39,6 +39,8 @@ if(args.image) is not None:
 
     detections = model.postprocess(output)
 
+    print(detections)
+
     output_img = model.draw_bbox(img, detections)
 
     s = ""
