@@ -4,9 +4,7 @@ import time
 import logging
 import argparse
 import numpy as np
-from PID import PID
 from utils import YOLOv5s
-from periphery import PWM
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("EdgeTPUModel")
@@ -22,20 +20,7 @@ parser.add_argument("--device", "-dev", type=int, default=1, help="Camera to pro
 parser.add_argument("--time", "-t", type = int, default = 300, help="Length of video to record")
 parser.add_argument("--conf", "-ct", type=float, default=0.5, help="Detection confidence threshold")
 parser.add_argument("--iou", "-it", type=float, default=0.1, help="Detections IOU threshold")
-parser.add_argument("--wb", "-b", type=int, default=10, help = "Weight of basketball")
-parser.add_argument("--wp", "-p", type=int, default=7, help = "Weight of player")
 args = parser.parse_args()
-
-controller = PID(0.000015, 0, 0.000001)
-
-pwm = PWM(1, 0)
-
-pwm.frequency = 50
-pwm.duty_cycle = 0.9
-
-pwm.enable()
-
-time.sleep(2)
 
 model = YOLOv5s(args.model, args.labels, args.conf, args.iou)
 
@@ -54,7 +39,7 @@ if(args.image) is not None:
 
     detections = model.postprocess(output)
 
-    output_img = model.draw_bbox(img, detections, args.wb, args.wp)
+    output_img = model.draw_bbox(img, detections)
 
     s = ""
 
@@ -111,7 +96,7 @@ elif (args.stream):
 
                 detections = model.postprocess(output)
 
-                output_frame = model.draw_bbox(frame, detections, args.wb, args.wp)
+                output_frame = model.draw_bbox(frame, detections)
 
                 writer.write(output_frame)
 
@@ -126,17 +111,6 @@ elif (args.stream):
                     s = s[:-1]
 
                 logger.info("Detected: {}".format(s))
-
-                if len(detections) >= 1:
-                    center_frame = frame.shape[1] / 2
-
-                    center_obj = (detections[0] + detections[2])/2
-
-                    error = center_obj - center_frame
-                    corr = controller(error)
-
-                    pwm.duty_cycle = np.clip(pwm.duty_cycle + corr, 0.865, 0.965)
-                    print(corr, error, pwm.duty_cycle)
 
                 if time.time()-start2 >=17:
                     writer.release()
