@@ -61,7 +61,7 @@ elif (args.stream):
             else:
                 size = common.input_size(interpreter)
 
-                img_resized = cv2.resize(img, size)
+                img_resized = cv2.resize(frame, size)
 
                 common.set_input(interpreter, img_resized)
                 interpreter.invoke()
