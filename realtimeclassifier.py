@@ -35,7 +35,46 @@ if(args.image) is not None:
 
     size = common.input_size(interpreter)
 
-    print(size)
-
     img_resized = cv2.resize(img, size)
 
+    common.set_input(interpreter, img_resized)
+    interpreter.invoke()
+    classes = classify.get_classes(interpreter, top_k=1)
+
+    labels = dataset.read_label_file(args.labels)
+    for c in classes:
+        print('%s: %.5f' % (labels.get(c.id, c.id), c.score))
+
+elif (args.stream):
+    logger.info("Opening stream on device: {}".format(args.device))
+
+    cam = cv2.VideoCapture(args.device)
+
+    while True:
+        try:
+            res, frame = cam.read()
+
+            if res is False:
+                logger.error("Empty image received")
+                break
+
+            else:
+                size = common.input_size(interpreter)
+
+                img_resized = cv2.resize(img, size)
+
+                common.set_input(interpreter, img_resized)
+                interpreter.invoke()
+                classes = classify.get_classes(interpreter, top_k=1)
+
+                labels = dataset.read_label_file(args.labels)
+                for c in classes:
+                    print('%s: %.5f' % (labels.get(c.id, c.id), c.score))
+
+            cv2.waitKey(1)
+
+        except KeyboardInterrupt:
+            break
+
+    cam.release()
+    cv2.destroyAllWindows()
