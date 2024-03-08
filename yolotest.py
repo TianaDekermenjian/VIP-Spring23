@@ -39,21 +39,20 @@ if(args.image) is not None:
 
     detections = model.postprocess(output)
 
-    print(detections)
-
     output_img = model.draw_bbox(img, detections)
 
-    s = ""
+    if len(detections):
+        s = ""
 
-    for c in np.unique(detections[:, -1]):
-        n = (detections[:, -1] == c).sum()
-        s += f"{n} {classes[int(c)]}{'s' * (n > 1)}, "
+        for c in np.unique(detections[:, -1]):
+            n = (detections[:, -1] == c).sum()
+            s += f"{n} {classes[int(c)]}{'s' * (n > 1)}, "
 
-    if s != "":
-        s = s.strip()
-        s = s[:-1]
+        if s != "":
+            s = s.strip()
+            s = s[:-1]
 
-    logger.info("Detected: {}".format(s))
+        logger.info("Detected: {}".format(s))
 
     filename, extension = os.path.splitext(args.image)
     output_filename = filename + "_result"
@@ -102,17 +101,18 @@ elif (args.stream):
 
                 writer.write(output_frame)
 
-                s = ""
+                if len(detections):
+                    s = ""
 
-                for c in np.unique(detections[:, -1]):
-                    n = (detections[:, -1] == c).sum()
-                    s += f"{n} {classes[int(c)]}{'s' * (n > 1)}, "
+                    for c in np.unique(detections[:, -1]):
+                        n = (detections[:, -1] == c).sum()
+                        s += f"{n} {classes[int(c)]}{'s' * (n > 1)}, "
 
-                if s != "":
-                    s = s.strip()
-                    s = s[:-1]
+                    if s != "":
+                        s = s.strip()
+                        s = s[:-1]
 
-                logger.info("Detected: {}".format(s))
+                    logger.info("Detected: {}".format(s))
 
                 if time.time()-start2 >=17:
                     writer.release()

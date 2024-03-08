@@ -35,7 +35,10 @@ class YOLOv5s:
         return self.classes
 
     def preprocess_frame(self, frame):
-        self.frame = cv2.imread(frame)
+        if type(frame) is str:
+            self.frame = cv2.imread(frame)
+        else:
+            self.frame = frame
 
         self.frame_h, self.frame_w, c = self.frame.shape
 
