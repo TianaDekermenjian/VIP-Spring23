@@ -77,7 +77,7 @@ elif (args.stream):
     resolution = (640, 480)
 
     index = 0
-    filename = f"/home/mendel/VIP/VIP-Spring23/streams/video_{index}.mp4"
+    filename = f"/home/mendel/VIP/VIP-Spring23/streams/new_video_{index}.mp4"
 
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
     writer = cv2.VideoWriter(filename, fourcc, fps, resolution)
@@ -118,7 +118,7 @@ elif (args.stream):
                     writer.release()
                     index += 1
 
-                    filename = f"/home/mendel/VIP/VIP-Spring23/streams/video_{index}.mp4"
+                    filename = f"/home/mendel/VIP/VIP-Spring23/streams/new_video_{index}.mp4"
 
                     writer = cv2.VideoWriter(filename, fourcc, fps, resolution)
 
@@ -137,7 +137,7 @@ elif (args.stream):
     else:
         writer.release()
 
-        filename = f"/home/mendel/VIP/VIP-Spring23/streams/video_{index}.mp4"
+        filename = f"/home/mendel/VIP/VIP-Spring23/streams/new_video_{index}.mp4"
         index += 1
 
     cam.release()
