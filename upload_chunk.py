@@ -62,28 +62,58 @@ def on_start(data):
     resolution = (640, 480)
     fps = 20
 
+    measure1 = []
+    measure2 = []
+
     # Initialize the ArduCam USB camera
     camera = cv2.VideoCapture(1)
     camera.set(cv2.CAP_PROP_FRAME_WIDTH, resolution[0])
     camera.set(cv2.CAP_PROP_FRAME_HEIGHT, resolution[1])
     camera.set(cv2.CAP_PROP_FPS, fps)
 
+    start_time = time.time()
+    start_time2 = time.time()
+
+    idex = 0
+    filename = f"/home/mendel/VIP/frames/output_video_{index}.mp4"
+
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    out = cv2.VideoWriter(f'/home/mendel/VIP/frames/output.mp4', fourcc, fps, resolution)
+    out = cv2.VideoWriter(filename, fourcc, fps, resolution)
 
     # Record the video
-    while isRecording:
+    while time.time() - start_time < times:
         ret, frame = camera.read()
         if not ret:
             break
+        writer.write(frame)
 
-        out.write(frame)
+        if time.time() - start_time2 >= 10:
+            # Release the video writer and display a message when the recording is complete
+            writer.release()
+            index += 1
+            print(f"Video recording saved as:, {filename}")
+            measure1.append(time.time())
+
+            filename = f"/home/mendel/VIP/VIP-Spring23/video_{index}.mp4"
+            writer = cv2.VideoWriter(filename, fourcc, fps, resolution)
+
+            measure2.append(time.time())
+            start_time2 = time.time()
 
         cv2.waitKey(1)
 
+    else:
+        writer.release()
+        filename = f"/home/mendel/VIP/VIP-Spring23/video_{index}.mp4"
+        index += 1
+        print(f"Video recording saved as:, {filename}")
+
+    print("time between epsilones:", np.subtract(measure2, measure1))
+
     # Release the camera and destroy the window when all recordings are complete
     camera.release()
-    out.release()
+    cv2.destroyAllWindows()
+
 
     print('recording is done!')
     cv2.destroyAllWindows()
