@@ -20,6 +20,7 @@ parser.add_argument("--device", "-dev", type=int, default=1, help="Camera to pro
 parser.add_argument("--time", "-t", type = int, default = 300, help="Length of video to record")
 parser.add_argument("--conf", "-ct", type=float, default=0.5, help="Detection confidence threshold")
 parser.add_argument("--iou", "-it", type=float, default=0.1, help="Detections IOU threshold")
+parser.add_argument("--gray", "-g", action='store_true', help="If input is in Grayscale")
 args = parser.parse_args()
 
 model = YOLOv5s(args.model, args.labels, args.conf, args.iou)
@@ -33,7 +34,10 @@ if(args.image) is not None:
 
     img = cv2.imread(args.image)
 
-    input_image = model.preprocess_frame(args.image)
+    if args.gray:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    input_image = model.preprocess_frame(img)
 
     output = model.inference(input_image)
 
@@ -91,6 +95,9 @@ elif (args.stream):
                 break
 
             else:
+                if args.gray:
+                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                
                 input = model.preprocess_frame(frame)
 
                 output = model.inference(input)
